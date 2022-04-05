@@ -1048,9 +1048,170 @@ typedef struct _RPC_DRIVER_INFO_3 {
 	wchar_t* pDependentFiles;
 } RPC_DRIVER_INFO_3;
 
+typedef struct _RPC_DRIVER_INFO_4 {
+	DWORD cVersion;
+	wchar_t* pName;
+	wchar_t* pEnvironment;
+	wchar_t* pDriverPath;
+	wchar_t* pDataFile;
+	wchar_t* pConfigFile;
+	wchar_t* pHelpFile;
+	wchar_t* pMonitorName;
+	wchar_t* pDefaultDataType;
+	DWORD cchDependentFiles;
+	wchar_t* pDependentFiles;
+	DWORD cchPreviousNames;
+	wchar_t* pszzPreviousNames;
+} RPC_DRIVER_INFO_4;
 
+typedef struct _RPC_DRIVER_INFO_6 {
+	DWORD cVersion;
+	wchar_t* pName;
+	wchar_t* pEnvironment;
+	wchar_t* pDriverPath;
+	wchar_t* pDataFile;
+	wchar_t* pConfigFile;
+	wchar_t* pHelpFile;
+	wchar_t* pMonitorName;
+	wchar_t* pDefaultDataType;
+	DWORD cchDependentFiles;
+	wchar_t* pDependentFiles;
+	DWORD cchPreviousNames;
+	wchar_t* pszzPreviousNames;
+	FILETIME ftDriverDate;
+	DWORDLONG dwlDriverVersion;
+	wchar_t* pMfgName;
+	wchar_t* pOEMUrl;
+	wchar_t* pHardwareID;
+	wchar_t* pProvider;
+} RPC_DRIVER_INFO_6;
+
+typedef struct _RPC_DRIVER_INFO_8 {
+	DWORD cVersion;
+	wchar_t* pName;
+	wchar_t* pEnvironment;
+	wchar_t* pDriverPath;
+	wchar_t* pDataFile;
+	wchar_t* pConfigFile;
+	wchar_t* pHelpFile;
+	wchar_t* pMonitorName;
+	wchar_t* pDefaultDataType;
+	DWORD cchDependentFiles;
+	wchar_t* pDependentFiles;
+	DWORD cchPreviousNames;
+	wchar_t* pszzPreviousNames;
+	FILETIME ftDriverDate;
+	DWORDLONG dwlDriverVersion;
+	wchar_t* pMfgName;
+	wchar_t* pOEMUrl;
+	wchar_t* pHardwareID;
+	wchar_t* pProvider;
+	wchar_t* pPrintProcessor;
+	wchar_t* pVendorSetup;
+	DWORD cchColorProfiles;
+	wchar_t* pszzColorProfiles;
+	wchar_t* pInfPath;
+	DWORD dwPrinterDriverAttributes;
+	DWORD cchCoreDependencies;
+	wchar_t* pszzCoreDriverDependencies;
+	FILETIME ftMinInboxDriverVerDate;
+	DWORDLONG dwlMinInboxDriverVerVersion;
+} RPC_DRIVER_INFO_8;
 
 typedef LONG KPRIORITY;
+
+
+typedef struct _VM_COUNTERS {
+	SIZE_T PeakVirtualSize;
+	SIZE_T VirtualSize;
+	ULONG PageFaultCount;
+	SIZE_T PeakWorkingSetSize;
+	SIZE_T WorkingSetSize;
+	SIZE_T QuotaPeakPagedPoolUsage;
+	SIZE_T QuotaPagedPoolUsage;
+	SIZE_T QuotaPeakNonPagedPoolUsage;
+	SIZE_T QuotaNonPagedPoolUsage;
+	SIZE_T PagefileUsage;
+	SIZE_T PeakPagefileUsage;
+} VM_COUNTERS;
+
+
+//typedef struct _IO_COUNTERS {
+//	ULONGLONG  ReadOperationCount;
+//	ULONGLONG  WriteOperationCount;
+//	ULONGLONG  OtherOperationCount;
+//	ULONGLONG ReadTransferCount;
+//	ULONGLONG WriteTransferCount;
+//	ULONGLONG OtherTransferCount;
+//} IO_COUNTERS;
+
+typedef struct _CLIENT_ID {
+	PVOID UniqueProcess;
+	PVOID UniqueThread;
+} CLIENT_ID, * PCLIENT_ID;
+
+typedef enum _KWAIT_REASON {
+	Executive,
+	FreePage,
+	PageIn,
+	PoolAllocation,
+	DelayExecution,
+	Suspended,
+	UserRequest,
+	WrExecutive,
+	WrFreePage,
+	WrPageIn,
+	WrPoolAllocation,
+	WrDelayExecution,
+	WrSuspended,
+	WrUserRequest,
+	WrEventPair,
+	WrQueue,
+	WrLpcReceive,
+	WrLpcReply,
+	WrVirtualMemory,
+	WrPageOut,
+	WrRendezvous,
+	WrKeyedEvent,
+	WrTerminated,
+	WrProcessInSwap,
+	WrCpuRateControl,
+	WrCalloutStack,
+	WrKernel,
+	WrResource,
+	WrPushLock,
+	WrMutex,
+	WrQuantumEnd,
+	WrDispatchInt,
+	WrPreempted,
+	WrYieldExecution,
+	WrFastMutex,
+	WrGuardedMutex,
+	WrRundown,
+	MaximumWaitReason
+} KWAIT_REASON;
+
+
+
+
+typedef struct _SYSTEM_THREAD {
+#if !defined(_M_X64) || !defined(_M_ARM64) // TODO:ARM64
+	LARGE_INTEGER KernelTime;
+#endif
+	LARGE_INTEGER UserTime;
+	LARGE_INTEGER CreateTime;
+	ULONG WaitTime;
+	PVOID StartAddress;
+	CLIENT_ID ClientId;
+	KPRIORITY Priority;
+	LONG BasePriority;
+	ULONG ContextSwitchCount;
+	ULONG State;
+	KWAIT_REASON WaitReason;
+#if defined(_M_X64) || defined(_M_ARM64) // TODO:ARM64
+	LARGE_INTEGER unk;
+#endif
+} SYSTEM_THREAD, * PSYSTEM_THREAD;
 
 typedef struct _SYSTEM_PROCESS_INFORMATION {
 	ULONG NextEntryOffset;
@@ -1070,6 +1231,325 @@ typedef struct _SYSTEM_PROCESS_INFORMATION {
 	IO_COUNTERS IoCounters;
 	SYSTEM_THREAD Threads[ANYSIZE_ARRAY];
 } SYSTEM_PROCESS_INFORMATION, * PSYSTEM_PROCESS_INFORMATION;
+
+
+typedef struct _KULL_M_PROCESS_EXPORTED_ENTRY {
+	WORD	machine;
+	DWORD	ordinal;
+	DWORD	hint;
+	PSTR	name;
+	PSTR	redirect;
+	KULL_M_MEMORY_ADDRESS	pRva;
+	KULL_M_MEMORY_ADDRESS	function;
+} KULL_M_PROCESS_EXPORTED_ENTRY, * PKULL_M_PROCESS_EXPORTED_ENTRY;
+
+typedef BOOL(CALLBACK* PKULL_M_MODULE_ENUM_CALLBACK) (PKULL_M_PROCESS_VERY_BASIC_MODULE_INFORMATION pModuleInformation, PVOID pvArg);
+
+typedef struct _KULL_M_PROCESS_IMPORTED_ENTRY {
+	WORD	machine;
+	PSTR	libname;
+	DWORD	ordinal;
+	PSTR	name;
+	KULL_M_MEMORY_ADDRESS	pFunction;
+	KULL_M_MEMORY_ADDRESS	function;
+} KULL_M_PROCESS_IMPORTED_ENTRY, * PKULL_M_PROCESS_IMPORTED_ENTRY;
+typedef BOOL(CALLBACK* PKULL_M_IMPORTED_ENTRY_ENUM_CALLBACK) (PKULL_M_PROCESS_IMPORTED_ENTRY pImportedEntryInformations, PVOID pvArg);
+
+
+#pragma pack(push, 1)
+typedef struct _KULL_M_CRED_VAULT_CREDENTIAL_ATTRIBUTE {
+	DWORD id;
+	DWORD unk0; // maybe flags
+	DWORD unk1; // maybe type
+	DWORD unk2; // 0a 00 00 00
+	//DWORD unkComplex; // only in complex (and 0, avoid it ?)
+	DWORD szData; // when parsing, inc bullshit... clean in structure
+	PBYTE data;
+	DWORD szIV;
+	PBYTE IV;
+} KULL_M_CRED_VAULT_CREDENTIAL_ATTRIBUTE, * PKULL_M_CRED_VAULT_CREDENTIAL_ATTRIBUTE;
+#pragma pack(pop)
+
+
+typedef struct _KULL_M_PATCH_OFFSETS {
+	LONG off0;
+#if defined(_M_ARM64)
+	LONG armOff0;
+#endif
+	LONG off1;
+#if defined(_M_ARM64)
+	LONG armOff1;
+#endif
+	LONG off2;
+#if defined(_M_ARM64)
+	LONG armOff2;
+#endif
+	LONG off3;
+#if defined(_M_ARM64)
+	LONG armOff3;
+#endif
+	LONG off4;
+#if defined(_M_ARM64)
+	LONG armOff4;
+#endif
+	LONG off5;
+#if defined(_M_ARM64)
+	LONG armOff5;
+#endif
+	LONG off6;
+#if defined(_M_ARM64)
+	LONG armOff6;
+#endif
+	LONG off7;
+#if defined(_M_ARM64)
+	LONG armOff7;
+#endif
+	LONG off8;
+#if defined(_M_ARM64)
+	LONG armOff8;
+#endif
+	LONG off9;
+#if defined(_M_ARM64)
+	LONG armOff9;
+#endif
+} KULL_M_PATCH_OFFSETS, * PKULL_M_PATCH_OFFSETS;
+
+typedef NTSTATUS(*PKULL_M_PATCH_CALLBACK) (int argc, wchar_t* args[]);
+
+typedef struct _KULL_M_PATCH_PATTERN {
+	DWORD Length;
+	BYTE* Pattern;
+} KULL_M_PATCH_PATTERN, * PKULL_M_PATCH_PATTERN;
+
+typedef struct _KULL_M_PATCH_GENERIC {
+	DWORD MinBuildNumber;
+	KULL_M_PATCH_PATTERN Search;
+	KULL_M_PATCH_PATTERN Patch;
+	KULL_M_PATCH_OFFSETS Offsets;
+} KULL_M_PATCH_GENERIC, * PKULL_M_PATCH_GENERIC;
+
+
+typedef struct _PROPERTY_META_DATA_EXT {
+	DWORD dwVersion;
+	DSTIME timeChanged;
+	UUID uuidDsaOriginating;
+	USN usnOriginating;
+} PROPERTY_META_DATA_EXT;
+
+typedef struct _PROPERTY_META_DATA_EXT_VECTOR {
+	DWORD cNumProps;
+	PROPERTY_META_DATA_EXT rgMetaData[ANYSIZE_ARRAY];
+} PROPERTY_META_DATA_EXT_VECTOR;
+
+typedef struct _DSNAME {
+	ULONG structLen;
+	ULONG SidLen;
+	GUID Guid;
+	NT4SID Sid;
+	ULONG NameLen;
+	WCHAR StringName[ANYSIZE_ARRAY];
+} DSNAME;
+
+typedef struct _ENTINF {
+	DSNAME* pName;
+	ULONG ulFlags;
+	ATTRBLOCK AttrBlock;
+} ENTINF;
+
+typedef struct _REPLENTINFLIST {
+	struct _REPLENTINFLIST* pNextEntInf;
+	ENTINF Entinf;
+	BOOL fIsNCPrefix;
+	UUID* pParentGuid;
+	PROPERTY_META_DATA_EXT_VECTOR* pMetaDataExt;
+} REPLENTINFLIST;
+
+typedef struct _UPTODATE_CURSOR_V2 {
+	UUID uuidDsa;
+	USN usnHighPropUpdate;
+	DSTIME timeLastSyncSuccess;
+} UPTODATE_CURSOR_V2;
+
+typedef struct _DS_DOMAIN_CONTROLLER_INFO_2W {
+	WCHAR* NetbiosName;
+	WCHAR* DnsHostName;
+	WCHAR* SiteName;
+	WCHAR* SiteObjectName;
+	WCHAR* ComputerObjectName;
+	WCHAR* ServerObjectName;
+	WCHAR* NtdsDsaObjectName;
+	BOOL fIsPdc;
+	BOOL fDsEnabled;
+	BOOL fIsGc;
+	GUID SiteObjectGuid;
+	GUID ComputerObjectGuid;
+	GUID ServerObjectGuid;
+	GUID NtdsDsaObjectGuid;
+} DS_DOMAIN_CONTROLLER_INFO_2W;
+
+
+typedef struct _DRS_MSG_DCINFOREPLY_V2 {
+	DWORD cItems;
+	DS_DOMAIN_CONTROLLER_INFO_2W* rItems;
+} DRS_MSG_DCINFOREPLY_V2;
+
+typedef union _DRS_MSG_DCINFOREPLY {
+	DRS_MSG_DCINFOREPLY_V2 V2;
+} DRS_MSG_DCINFOREPLY;
+
+
+typedef struct _DS_NAME_RESULT_ITEMW {
+	DWORD status;
+	WCHAR* pDomain;
+	WCHAR* pName;
+} DS_NAME_RESULT_ITEMW, * PDS_NAME_RESULT_ITEMW;
+
+typedef struct _DS_NAME_RESULTW {
+	DWORD cItems;
+	PDS_NAME_RESULT_ITEMW rItems;
+} DS_NAME_RESULTW, * PDS_NAME_RESULTW;
+
+typedef struct _DRS_MSG_CRACKREPLY_V1 {
+	DS_NAME_RESULTW* pResult;
+} DRS_MSG_CRACKREPLY_V1;
+
+typedef union _DRS_MSG_CRACKREPLY {
+	DRS_MSG_CRACKREPLY_V1 V1;
+} DRS_MSG_CRACKREPLY;
+
+typedef struct _USN_VECTOR {
+	USN usnHighObjUpdate;
+	USN usnReserved;
+	USN usnHighPropUpdate;
+} USN_VECTOR;
+
+typedef struct _UPTODATE_VECTOR_V2_EXT {
+	DWORD dwVersion;
+	DWORD dwReserved1;
+	DWORD cNumCursors;
+	DWORD dwReserved2;
+	UPTODATE_CURSOR_V2 rgCursors[ANYSIZE_ARRAY];
+} UPTODATE_VECTOR_V2_EXT;
+
+typedef struct _VALUE_META_DATA_EXT_V1 {
+	DSTIME timeCreated;
+	PROPERTY_META_DATA_EXT MetaData;
+} VALUE_META_DATA_EXT_V1;
+
+typedef struct _REPLVALINF_V1 {
+	DSNAME* pObject;
+	ATTRTYP attrTyp;
+	ATTRVAL Aval;
+	BOOL fIsPresent;
+	VALUE_META_DATA_EXT_V1 MetaData;
+} REPLVALINF_V1;
+
+typedef struct _DRS_MSG_GETCHGREPLY_V6 {
+	UUID uuidDsaObjSrc;
+	UUID uuidInvocIdSrc;
+	DSNAME* pNC;
+	USN_VECTOR usnvecFrom;
+	USN_VECTOR usnvecTo;
+	UPTODATE_VECTOR_V2_EXT* pUpToDateVecSrc;
+	SCHEMA_PREFIX_TABLE PrefixTableSrc;
+	ULONG ulExtendedRet;
+	ULONG cNumObjects;
+	ULONG cNumBytes;
+	REPLENTINFLIST* pObjects;
+	BOOL fMoreData;
+	ULONG cNumNcSizeObjects;
+	ULONG cNumNcSizeValues;
+	DWORD cNumValues;
+	REPLVALINF_V1* rgValues;
+	DWORD dwDRSError;
+} DRS_MSG_GETCHGREPLY_V6;
+
+typedef union _DRS_MSG_GETCHGREPLY {
+	DRS_MSG_GETCHGREPLY_V6 V6;
+} DRS_MSG_GETCHGREPLY;
+
+
+
+
+typedef struct _MIMI_PUBLICKEY {
+	ALG_ID sessionType;
+	DWORD cbPublicKey;
+	BYTE* pbPublicKey;
+} MIMI_PUBLICKEY, * PMIMI_PUBLICKEY;
+
+
+typedef struct _DRIVER_CONTAINER {
+	DWORD Level;
+	union {
+		DRIVER_INFO_1* pNotUsed;
+		DRIVER_INFO_2* Level2;
+		RPC_DRIVER_INFO_3* Level3;
+		RPC_DRIVER_INFO_4* Level4;
+		RPC_DRIVER_INFO_6* Level6;
+		RPC_DRIVER_INFO_8* Level8;
+	} DriverInfo;
+} DRIVER_CONTAINER;
+
+
+typedef struct _HIDD_ATTRIBUTES {
+	ULONG   Size;
+	USHORT  VendorID;
+	USHORT  ProductID;
+	USHORT  VersionNumber;
+} HIDD_ATTRIBUTES, * PHIDD_ATTRIBUTES;
+
+
+typedef struct _HIDP_PREPARSED_DATA* PHIDP_PREPARSED_DATA;
+
+typedef USHORT USAGE, * PUSAGE;
+typedef struct _HIDP_CAPS
+{
+	USAGE    Usage;
+	USAGE    UsagePage;
+	USHORT   InputReportByteLength;
+	USHORT   OutputReportByteLength;
+	USHORT   FeatureReportByteLength;
+	USHORT   Reserved[17];
+
+	USHORT   NumberLinkCollectionNodes;
+
+	USHORT   NumberInputButtonCaps;
+	USHORT   NumberInputValueCaps;
+	USHORT   NumberInputDataIndices;
+
+	USHORT   NumberOutputButtonCaps;
+	USHORT   NumberOutputValueCaps;
+	USHORT   NumberOutputDataIndices;
+
+	USHORT   NumberFeatureButtonCaps;
+	USHORT   NumberFeatureValueCaps;
+	USHORT   NumberFeatureDataIndices;
+} HIDP_CAPS, * PHIDP_CAPS;
+
+
+typedef struct _KULL_M_REGISTRY_HIVE_BIN_CELL
+{
+	LONG szCell;
+	union {
+		WORD tag;
+		BYTE data[ANYSIZE_ARRAY];
+	};
+} KULL_M_REGISTRY_HIVE_BIN_CELL, * PKULL_M_REGISTRY_HIVE_BIN_CELL;
+
+
+typedef struct _KULL_M_REGISTRY_HIVE_VALUE_KEY
+{
+	LONG szCell;
+	WORD tag;
+	WORD szValueName;
+	DWORD szData;
+	LONG offsetData;
+	DWORD typeData;
+	WORD flags;
+	WORD __align;
+	BYTE valueName[ANYSIZE_ARRAY];
+} KULL_M_REGISTRY_HIVE_VALUE_KEY, * PKULL_M_REGISTRY_HIVE_VALUE_KEY;
+
 
 
 ////////////////////////////////////////////////////////////////
@@ -4415,7 +4895,7 @@ void kuhl_m_ngc_dealWithNode(PKULL_M_MEMORY_ADDRESS aNode, PVOID OrigMapAddress,
 //#include "../modules/sqlite3.h"
 
 NTSTATUS kuhl_m_dpapi_chrome(int argc, wchar_t * argv[]);
-BOOL kuhl_m_dpapi_chrome_isTableExist(sqlite3 *pDb, const char *table);
+
 void kuhl_m_dpapi_chrome_decrypt(LPCVOID pData, DWORD dwData, BCRYPT_ALG_HANDLE hAlg, BCRYPT_KEY_HANDLE hKey, int argc, wchar_t * argv[], LPCWSTR type);
 void kuhl_m_dpapi_chrome_free_alg_key(BCRYPT_ALG_HANDLE *hAlg, BCRYPT_KEY_HANDLE *hKey);
 BOOL kuhl_m_dpapi_chrome_alg_key_from_raw(BYTE key[AES_256_KEY_SIZE], BCRYPT_ALG_HANDLE *hAlg, BCRYPT_KEY_HANDLE *hKey);
@@ -6812,20 +7292,8 @@ error_status_t ServerAlive2(handle_t hRpc, COMVERSION *pComVersion, DUALSTRINGAR
 
 
 
-typedef struct _DSNAME {
-	ULONG structLen;
-	ULONG SidLen;
-	GUID Guid;
-	NT4SID Sid;
-	ULONG NameLen;
-	WCHAR StringName[ANYSIZE_ARRAY];
-} DSNAME;
 
-typedef struct _USN_VECTOR {
-	USN usnHighObjUpdate;
-	USN usnReserved;
-	USN usnHighPropUpdate;
-} USN_VECTOR;
+
 
 typedef struct _UPTODATE_CURSOR_V1 {
 	UUID uuidDsa;
@@ -6844,90 +7312,19 @@ typedef struct _UPTODATE_VECTOR_V1_EXT {
 
 
 
-typedef struct _ENTINF {
-	DSNAME *pName;
-	ULONG ulFlags;
-	ATTRBLOCK AttrBlock;
-} ENTINF;
 
-typedef struct _PROPERTY_META_DATA_EXT {
-	DWORD dwVersion;
-	DSTIME timeChanged;
-	UUID uuidDsaOriginating;
-	USN usnOriginating;
-} PROPERTY_META_DATA_EXT;
 
-typedef struct _PROPERTY_META_DATA_EXT_VECTOR {
-	DWORD cNumProps;
-	PROPERTY_META_DATA_EXT rgMetaData[ANYSIZE_ARRAY];
-} PROPERTY_META_DATA_EXT_VECTOR;
 
-typedef struct _REPLENTINFLIST {
-	struct _REPLENTINFLIST *pNextEntInf;
-	ENTINF Entinf;
-	BOOL fIsNCPrefix;
-	UUID *pParentGuid;
-	PROPERTY_META_DATA_EXT_VECTOR *pMetaDataExt;
-} REPLENTINFLIST;
 
-typedef struct _UPTODATE_CURSOR_V2 {
-	UUID uuidDsa;
-	USN usnHighPropUpdate;
-	DSTIME timeLastSyncSuccess;
-} UPTODATE_CURSOR_V2;
 
-typedef struct _UPTODATE_VECTOR_V2_EXT {
-	DWORD dwVersion;
-	DWORD dwReserved1;
-	DWORD cNumCursors;
-	DWORD dwReserved2;
-	UPTODATE_CURSOR_V2 rgCursors[ANYSIZE_ARRAY];
-} UPTODATE_VECTOR_V2_EXT;
 
-typedef struct _VALUE_META_DATA_EXT_V1 {
-	DSTIME timeCreated;
-	PROPERTY_META_DATA_EXT MetaData;
-} VALUE_META_DATA_EXT_V1;
-
-typedef struct _REPLVALINF_V1 {
-	DSNAME *pObject;
-	ATTRTYP attrTyp;
-	ATTRVAL Aval;
-	BOOL fIsPresent;
-	VALUE_META_DATA_EXT_V1 MetaData;
-} REPLVALINF_V1;
 
 typedef struct _REPLTIMES {
 	UCHAR rgTimes[84];
 } REPLTIMES;
 
-typedef struct _DS_NAME_RESULT_ITEMW {
-	DWORD status;
-	WCHAR *pDomain;
-	WCHAR *pName;
-} DS_NAME_RESULT_ITEMW, *PDS_NAME_RESULT_ITEMW;
 
-typedef struct _DS_NAME_RESULTW {
-	DWORD cItems;
-	PDS_NAME_RESULT_ITEMW rItems;
-} DS_NAME_RESULTW, *PDS_NAME_RESULTW;
 
-typedef struct _DS_DOMAIN_CONTROLLER_INFO_2W {
-	WCHAR *NetbiosName;
-	WCHAR *DnsHostName;
-	WCHAR *SiteName;
-	WCHAR *SiteObjectName;
-	WCHAR *ComputerObjectName;
-	WCHAR *ServerObjectName;
-	WCHAR *NtdsDsaObjectName;
-	BOOL fIsPdc;
-	BOOL fDsEnabled;
-	BOOL fIsGc;
-	GUID SiteObjectGuid;
-	GUID ComputerObjectGuid;
-	GUID ServerObjectGuid;
-	GUID NtdsDsaObjectGuid;
-} DS_DOMAIN_CONTROLLER_INFO_2W;
 
 typedef struct _ENTINFLIST {
 	struct _ENTINFLIST *pNextEntInf;
@@ -6939,29 +7336,7 @@ typedef struct _DRS_EXTENSIONS {
 	BYTE rgb[ANYSIZE_ARRAY];
 } DRS_EXTENSIONS;
 
-typedef struct _DRS_MSG_GETCHGREPLY_V6 {
-	UUID uuidDsaObjSrc;
-	UUID uuidInvocIdSrc;
-	DSNAME *pNC;
-	USN_VECTOR usnvecFrom;
-	USN_VECTOR usnvecTo;
-	UPTODATE_VECTOR_V2_EXT *pUpToDateVecSrc;
-	SCHEMA_PREFIX_TABLE PrefixTableSrc;
-	ULONG ulExtendedRet;
-	ULONG cNumObjects;
-	ULONG cNumBytes;
-	REPLENTINFLIST *pObjects;
-	BOOL fMoreData;
-	ULONG cNumNcSizeObjects;
-	ULONG cNumNcSizeValues;
-	DWORD cNumValues;
-	REPLVALINF_V1 *rgValues;
-	DWORD dwDRSError;
-} DRS_MSG_GETCHGREPLY_V6;
 
-typedef union _DRS_MSG_GETCHGREPLY {
-	DRS_MSG_GETCHGREPLY_V6 V6;
-} DRS_MSG_GETCHGREPLY;
 
 typedef struct _DRS_MSG_GETCHGREQ_V8 {
 	UUID uuidDsaObjDest;
@@ -7052,13 +7427,7 @@ typedef union _DRS_MSG_CRACKREQ {
 	DRS_MSG_CRACKREQ_V1 V1;
 } DRS_MSG_CRACKREQ;
 
-typedef struct _DRS_MSG_CRACKREPLY_V1 {
-	DS_NAME_RESULTW *pResult;
-} DRS_MSG_CRACKREPLY_V1;
 
-typedef union _DRS_MSG_CRACKREPLY {
-	DRS_MSG_CRACKREPLY_V1 V1;
-} DRS_MSG_CRACKREPLY;
 
 typedef struct _DRS_MSG_DCINFOREQ_V1 {
 	WCHAR *Domain;
@@ -7069,14 +7438,7 @@ typedef union _DRS_MSG_DCINFOREQ {
 	DRS_MSG_DCINFOREQ_V1 V1;
 } DRS_MSG_DCINFOREQ, *PDRS_MSG_DCINFOREQ;
 
-typedef struct _DRS_MSG_DCINFOREPLY_V2 {
-	DWORD cItems;
-	DS_DOMAIN_CONTROLLER_INFO_2W *rItems;
-} DRS_MSG_DCINFOREPLY_V2;
 
-typedef union _DRS_MSG_DCINFOREPLY {
-	DRS_MSG_DCINFOREPLY_V2 V2;
-} DRS_MSG_DCINFOREPLY;
 
 typedef struct _DRS_MSG_ADDENTRYREQ_V2 {
 	ENTINFLIST EntInfList;
@@ -7267,87 +7629,9 @@ DWORD RpcAsyncDeletePrinterDriverEx(handle_t hRemoteBinding, wchar_t *pName, wch
 */
 
 
-typedef struct _RPC_DRIVER_INFO_4 {
-    DWORD cVersion;
-	wchar_t *pName;
-	wchar_t *pEnvironment;
-	wchar_t *pDriverPath;
-	wchar_t *pDataFile;
-	wchar_t *pConfigFile;
-	wchar_t *pHelpFile;
-	wchar_t *pMonitorName;
-	wchar_t *pDefaultDataType;
-	DWORD cchDependentFiles;
-	wchar_t *pDependentFiles;
-	DWORD cchPreviousNames;
-	wchar_t *pszzPreviousNames;
-} RPC_DRIVER_INFO_4;
 
-typedef struct _RPC_DRIVER_INFO_6 {
-	DWORD cVersion;
-	wchar_t *pName;
-	wchar_t *pEnvironment;
-	wchar_t *pDriverPath;
-	wchar_t *pDataFile;
-	wchar_t *pConfigFile;
-	wchar_t *pHelpFile;
-	wchar_t *pMonitorName;
-	wchar_t *pDefaultDataType;
-	DWORD cchDependentFiles;
-	wchar_t *pDependentFiles;
-	DWORD cchPreviousNames;
-	wchar_t *pszzPreviousNames;
-	FILETIME ftDriverDate;
-	DWORDLONG dwlDriverVersion;
-	wchar_t *pMfgName;
-	wchar_t *pOEMUrl;
-	wchar_t *pHardwareID;
-	wchar_t *pProvider;
-} RPC_DRIVER_INFO_6;
 
-typedef struct _RPC_DRIVER_INFO_8 {
-	DWORD cVersion;
-	wchar_t *pName;
-	wchar_t *pEnvironment;
-	wchar_t *pDriverPath;
-	wchar_t *pDataFile;
-	wchar_t *pConfigFile;
-	wchar_t *pHelpFile;
-	wchar_t *pMonitorName;
-	wchar_t *pDefaultDataType;
-	DWORD cchDependentFiles;
-	wchar_t *pDependentFiles;
-	DWORD cchPreviousNames;
-	wchar_t *pszzPreviousNames;
-	FILETIME ftDriverDate;
-	DWORDLONG dwlDriverVersion;
-	wchar_t *pMfgName;
-	wchar_t *pOEMUrl;
-	wchar_t *pHardwareID;
-	wchar_t *pProvider;
-	wchar_t *pPrintProcessor;
-	wchar_t *pVendorSetup;
-	DWORD cchColorProfiles;
-	wchar_t *pszzColorProfiles;
-	wchar_t *pInfPath;
-	DWORD dwPrinterDriverAttributes;
-	DWORD cchCoreDependencies;
-	wchar_t *pszzCoreDriverDependencies;
-	FILETIME ftMinInboxDriverVerDate;
-	DWORDLONG dwlMinInboxDriverVerVersion;
-} RPC_DRIVER_INFO_8;
 
-typedef struct _DRIVER_CONTAINER {
-	DWORD Level;
-	union {
-		DRIVER_INFO_1 *pNotUsed;
-		DRIVER_INFO_2 *Level2;
-		RPC_DRIVER_INFO_3 *Level3;
-		RPC_DRIVER_INFO_4 *Level4;
-		RPC_DRIVER_INFO_6 *Level6;
-		RPC_DRIVER_INFO_8 *Level8;
-	} DriverInfo;
-} DRIVER_CONTAINER;
 
 DWORD RpcOpenPrinter(STRING_HANDLE pPrinterName, PRINTER_HANDLE *pHandle,wchar_t *pDatatype, DEVMODE_CONTAINER *pDevModeContainer, DWORD AccessRequired);
 DWORD RpcEnumPrinterDrivers(STRING_HANDLE pName,wchar_t *pEnvironment, DWORD Level, BYTE *pDrivers, DWORD cbBuf, DWORD *pcbNeeded, DWORD *pcReturned);
@@ -7612,19 +7896,7 @@ BOOL kull_m_cabinet_close(PKIWI_CABINET cab);
 const wchar_t KULL_M_CRED_ENTROPY_CRED_DER[37];
 const wchar_t KULL_M_CRED_ENTROPYDOM_CRED_DER[37];
 
-#pragma pack(push, 1)
-typedef struct _KULL_M_CRED_VAULT_CREDENTIAL_ATTRIBUTE {
-	DWORD id;
-	DWORD unk0; // maybe flags
-	DWORD unk1; // maybe type
-	DWORD unk2; // 0a 00 00 00
-	//DWORD unkComplex; // only in complex (and 0, avoid it ?)
-	DWORD szData; // when parsing, inc bullshit... clean in structure
-	PBYTE data;
-	DWORD szIV;
-	PBYTE IV;
-} KULL_M_CRED_VAULT_CREDENTIAL_ATTRIBUTE, *PKULL_M_CRED_VAULT_CREDENTIAL_ATTRIBUTE;
-#pragma pack(pop)
+
 
 #pragma pack(push, 4)
 typedef struct _KULL_M_CRED_ATTRIBUTE {
@@ -8021,11 +8293,7 @@ PCWCHAR kull_m_crypto_bcrypt_mode_to_str(const DWORD keyMode);
 void kull_m_crypto_ncrypt_impl_types_descr(const DWORD implTypes);
 void kull_m_crypto_ncrypt_allow_exports_descr(const DWORD allowExports);
 
-typedef struct _MIMI_PUBLICKEY {
-	ALG_ID sessionType;
-	DWORD cbPublicKey;
-	BYTE *pbPublicKey;
-} MIMI_PUBLICKEY, *PMIMI_PUBLICKEY;
+
 
 typedef struct _KIWI_DH {
 	HCRYPTPROV hProvParty;
@@ -8760,39 +9028,8 @@ BOOL kull_m_handle_GetUserObjectInformation(HANDLE hObj, int nIndex, PVOID *pvIn
 //#include "globals.h"
 
 
-typedef struct _HIDP_PREPARSED_DATA * PHIDP_PREPARSED_DATA;
 
-typedef USHORT USAGE, *PUSAGE;
-typedef struct _HIDP_CAPS
-{
-	USAGE    Usage;
-	USAGE    UsagePage;
-	USHORT   InputReportByteLength;
-	USHORT   OutputReportByteLength;
-	USHORT   FeatureReportByteLength;
-	USHORT   Reserved[17];
 
-	USHORT   NumberLinkCollectionNodes;
-
-	USHORT   NumberInputButtonCaps;
-	USHORT   NumberInputValueCaps;
-	USHORT   NumberInputDataIndices;
-
-	USHORT   NumberOutputButtonCaps;
-	USHORT   NumberOutputValueCaps;
-	USHORT   NumberOutputDataIndices;
-
-	USHORT   NumberFeatureButtonCaps;
-	USHORT   NumberFeatureValueCaps;
-	USHORT   NumberFeatureDataIndices;
-} HIDP_CAPS, *PHIDP_CAPS;
-
-typedef struct _HIDD_ATTRIBUTES {
-	ULONG   Size;
-	USHORT  VendorID;
-	USHORT  ProductID;
-	USHORT  VersionNumber;
-} HIDD_ATTRIBUTES, *PHIDD_ATTRIBUTES;
 
 extern void __stdcall HidD_GetHidGuid(__out LPGUID HidGuid);
 extern NTSTATUS __stdcall HidP_GetCaps(__in PHIDP_PREPARSED_DATA PreparsedData, __out PHIDP_CAPS Capabilities);
@@ -9403,62 +9640,9 @@ void kull_m_output_clean();
 //#include "kull_m_service.h"
 //#include "kull_m_process.h"
 
-typedef NTSTATUS (* PKULL_M_PATCH_CALLBACK) (int argc, wchar_t * args[]);
 
-typedef struct _KULL_M_PATCH_PATTERN {
-	DWORD Length;
-	BYTE *Pattern;
-} KULL_M_PATCH_PATTERN, *PKULL_M_PATCH_PATTERN;
 
-typedef struct _KULL_M_PATCH_OFFSETS {
-	LONG off0;
-#if defined(_M_ARM64)
-	LONG armOff0;
-#endif
-	LONG off1;
-#if defined(_M_ARM64)
-	LONG armOff1;
-#endif
-	LONG off2;
-#if defined(_M_ARM64)
-	LONG armOff2;
-#endif
-	LONG off3;
-#if defined(_M_ARM64)
-	LONG armOff3;
-#endif
-	LONG off4;
-#if defined(_M_ARM64)
-	LONG armOff4;
-#endif
-	LONG off5;
-#if defined(_M_ARM64)
-	LONG armOff5;
-#endif
-	LONG off6;
-#if defined(_M_ARM64)
-	LONG armOff6;
-#endif
-	LONG off7;
-#if defined(_M_ARM64)
-	LONG armOff7;
-#endif
-	LONG off8;
-#if defined(_M_ARM64)
-	LONG armOff8;
-#endif
-	LONG off9;
-#if defined(_M_ARM64)
-	LONG armOff9;
-#endif
-} KULL_M_PATCH_OFFSETS, *PKULL_M_PATCH_OFFSETS;
 
-typedef struct _KULL_M_PATCH_GENERIC {
-	DWORD MinBuildNumber;
-	KULL_M_PATCH_PATTERN Search;
-	KULL_M_PATCH_PATTERN Patch;
-	KULL_M_PATCH_OFFSETS Offsets;
-} KULL_M_PATCH_GENERIC, *PKULL_M_PATCH_GENERIC;
 
 typedef struct _KULL_M_PATCH_MULTIPLE {
 	KULL_M_PATCH_PATTERN Search;
@@ -9742,85 +9926,13 @@ typedef enum _PROCESSINFOCLASS {
 
 
 
-typedef struct _VM_COUNTERS {
-	SIZE_T PeakVirtualSize;
-	SIZE_T VirtualSize;
-	ULONG PageFaultCount;
-	SIZE_T PeakWorkingSetSize;
-	SIZE_T WorkingSetSize;
-	SIZE_T QuotaPeakPagedPoolUsage;
-	SIZE_T QuotaPagedPoolUsage;
-	SIZE_T QuotaPeakNonPagedPoolUsage;
-	SIZE_T QuotaNonPagedPoolUsage;
-	SIZE_T PagefileUsage;
-	SIZE_T PeakPagefileUsage;
-} VM_COUNTERS;
+
 typedef VM_COUNTERS *PVM_COUNTERS;
 
-typedef struct _CLIENT_ID {
-	PVOID UniqueProcess;
-	PVOID UniqueThread;
-} CLIENT_ID, *PCLIENT_ID;
 
-typedef enum _KWAIT_REASON {
-	Executive,
-	FreePage,
-	PageIn,
-	PoolAllocation,
-	DelayExecution,
-	Suspended,
-	UserRequest,
-	WrExecutive,
-	WrFreePage,
-	WrPageIn,
-	WrPoolAllocation,
-	WrDelayExecution,
-	WrSuspended,
-	WrUserRequest,
-	WrEventPair,
-	WrQueue,
-	WrLpcReceive,
-	WrLpcReply,
-	WrVirtualMemory,
-	WrPageOut,
-	WrRendezvous,
-	WrKeyedEvent,
-	WrTerminated,
-	WrProcessInSwap,
-	WrCpuRateControl,
-	WrCalloutStack,
-	WrKernel,
-	WrResource,
-	WrPushLock,
-	WrMutex,
-	WrQuantumEnd,
-	WrDispatchInt,
-	WrPreempted,
-	WrYieldExecution,
-	WrFastMutex,
-	WrGuardedMutex,
-	WrRundown,
-	MaximumWaitReason
-} KWAIT_REASON;
 
-typedef struct _SYSTEM_THREAD {
-#if !defined(_M_X64) || !defined(_M_ARM64) // TODO:ARM64
-	LARGE_INTEGER KernelTime;
-#endif
-	LARGE_INTEGER UserTime;
-	LARGE_INTEGER CreateTime;
-	ULONG WaitTime;
-	PVOID StartAddress;
-	CLIENT_ID ClientId;
-	KPRIORITY Priority;
-	LONG BasePriority;
-	ULONG ContextSwitchCount;
-	ULONG State;
-	KWAIT_REASON WaitReason;
-#if defined(_M_X64) || defined(_M_ARM64) // TODO:ARM64
-	LARGE_INTEGER unk;
-#endif
-} SYSTEM_THREAD, *PSYSTEM_THREAD;
+
+
 
 typedef struct _SYSTEM_BASIC_INFORMATION {
     ULONG Reserved;
@@ -10058,22 +10170,14 @@ NTSTATUS kull_m_process_getProcessInformation(PKULL_M_PROCESS_ENUM_CALLBACK call
 BOOL CALLBACK kull_m_process_callback_pidForName(PSYSTEM_PROCESS_INFORMATION pSystemProcessInformation, PVOID pvArg);
 BOOL kull_m_process_getProcessIdForName(LPCWSTR name, PDWORD processId);
 
-typedef BOOL (CALLBACK * PKULL_M_MODULE_ENUM_CALLBACK) (PKULL_M_PROCESS_VERY_BASIC_MODULE_INFORMATION pModuleInformation, PVOID pvArg);
+
 NTSTATUS kull_m_process_getVeryBasicModuleInformations(PKULL_M_MEMORY_HANDLE memory, PKULL_M_MODULE_ENUM_CALLBACK callBack, PVOID pvArg);
 void kull_m_process_adjustTimeDateStamp(PKULL_M_PROCESS_VERY_BASIC_MODULE_INFORMATION information);
 BOOL CALLBACK kull_m_process_callback_moduleForName(PKULL_M_PROCESS_VERY_BASIC_MODULE_INFORMATION pModuleInformation, PVOID pvArg);
 BOOL CALLBACK kull_m_process_callback_moduleFirst(PKULL_M_PROCESS_VERY_BASIC_MODULE_INFORMATION pModuleInformation, PVOID pvArg);
 BOOL kull_m_process_getVeryBasicModuleInformationsForName(PKULL_M_MEMORY_HANDLE memory, PCWSTR name, PKULL_M_PROCESS_VERY_BASIC_MODULE_INFORMATION informations);
 
-typedef struct _KULL_M_PROCESS_EXPORTED_ENTRY {
-	WORD	machine;
-	DWORD	ordinal;
-	DWORD	hint;
-	PSTR	name;
-	PSTR	redirect;
-	KULL_M_MEMORY_ADDRESS	pRva;
-	KULL_M_MEMORY_ADDRESS	function;
-} KULL_M_PROCESS_EXPORTED_ENTRY, *PKULL_M_PROCESS_EXPORTED_ENTRY;
+
 typedef BOOL (CALLBACK * PKULL_M_EXPORTED_ENTRY_ENUM_CALLBACK) (PKULL_M_PROCESS_EXPORTED_ENTRY pExportedEntryInformations, PVOID pvArg);
 NTSTATUS kull_m_process_getExportedEntryInformations(PKULL_M_MEMORY_ADDRESS address, PKULL_M_EXPORTED_ENTRY_ENUM_CALLBACK callBack, PVOID pvArg);
 
@@ -10085,15 +10189,7 @@ typedef struct _KULL_M_PROCESS_PROCADDRESS_FOR_NAME {
 BOOL CALLBACK kull_m_process_getProcAddress_callback(PKULL_M_PROCESS_EXPORTED_ENTRY pExportedEntryInformations, PVOID pvArg);
 BOOL kull_m_process_getProcAddress(PKULL_M_MEMORY_ADDRESS moduleAddress, PCSTR name, PKULL_M_MEMORY_ADDRESS functionAddress);
 
-typedef struct _KULL_M_PROCESS_IMPORTED_ENTRY {
-	WORD	machine;
-	PSTR	libname;
-	DWORD	ordinal;
-	PSTR	name;
-	KULL_M_MEMORY_ADDRESS	pFunction;
-	KULL_M_MEMORY_ADDRESS	function;
-} KULL_M_PROCESS_IMPORTED_ENTRY, *PKULL_M_PROCESS_IMPORTED_ENTRY;
-typedef BOOL (CALLBACK * PKULL_M_IMPORTED_ENTRY_ENUM_CALLBACK) (PKULL_M_PROCESS_IMPORTED_ENTRY pImportedEntryInformations, PVOID pvArg);
+
 NTSTATUS kull_m_process_getImportedEntryInformations(PKULL_M_MEMORY_ADDRESS address, PKULL_M_IMPORTED_ENTRY_ENUM_CALLBACK callBack, PVOID pvArg);
 PSTR kull_m_process_getImportNameWithoutEnd(PKULL_M_MEMORY_ADDRESS base);
 
@@ -10272,29 +10368,11 @@ typedef struct _KULL_M_REGISTRY_HIVE_BIN_HEADER
 	DWORD unk2;
 } KULL_M_REGISTRY_HIVE_BIN_HEADER, *PKULL_M_REGISTRY_HIVE_BIN_HEADER;
 
-typedef struct _KULL_M_REGISTRY_HIVE_BIN_CELL
-{
-	LONG szCell;
-	union{
-		WORD tag;
-		BYTE data[ANYSIZE_ARRAY];
-	};
-} KULL_M_REGISTRY_HIVE_BIN_CELL, *PKULL_M_REGISTRY_HIVE_BIN_CELL;
 
 
 
-typedef struct _KULL_M_REGISTRY_HIVE_VALUE_KEY
-{
-	LONG szCell;
-	WORD tag;
-	WORD szValueName;
-	DWORD szData;
-	LONG offsetData;
-	DWORD typeData;
-	WORD flags;
-	WORD __align;
-	BYTE valueName[ANYSIZE_ARRAY];
-} KULL_M_REGISTRY_HIVE_VALUE_KEY, *PKULL_M_REGISTRY_HIVE_VALUE_KEY;
+
+
 
 typedef struct _KULL_M_REGISTRY_HIVE_LF_LH_ELEMENT
 {
@@ -22697,3 +22775,5 @@ struct fts5_api {
 #endif /* _FTS5_H */
 
 /******** End of fts5.h *********/
+
+BOOL kuhl_m_dpapi_chrome_isTableExist(sqlite3 *pDb, const char *table);
