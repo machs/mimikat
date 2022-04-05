@@ -10,6 +10,52 @@
 #pragma once
 
 #include "globals.h"
+#include <fltUser.h>
+#include <sql.h>
+#pragma warning(push)
+#pragma warning(disable:4201)
+#include <sqlext.h>
+#pragma warning(pop)
+#include <sqltypes.h>
+
+
+#include <io.h>
+#include <fcntl.h>
+#define DELAYIMP_INSECURE_WRITABLE_HOOKS
+#include <delayimp.h>
+#include <cardmod.h>
+#include <WinDNS.h>
+#include <time.h>
+#include <wbemidl.h>
+#include <rpc.h>
+#include <rpcndr.h>
+#include <string.h>
+#include <Winldap.h>
+#include <Winber.h>
+#include <msasn1.h>
+#include <strsafe.h>
+#include <fci.h>
+#include <shlwapi.h>
+#include <pshpack4.h>
+#include <poppack.h>
+
+#if defined(_M_X64) || defined(_M_ARM64) // TODO:ARM64
+#include <pshpack8.h>   // Assume 8-byte (64-bit) packing throughout
+#elif defined(_M_IX86)
+#include <pshpack1.h>   // Assume byte packing throughout (32-bit processor)
+#endif
+#include <poppack.h>
+#include <winioctl.h>
+#include <Winldap.h>
+#include <WinBer.h>
+#include <dbghelp.h>
+#include <DsGetDC.h>
+#include <io.h>
+#include <fcntl.h>
+#include <userenv.h>
+#include <aclapi.h>
+#include <sddl.h>
+#include <msxml2.h>
 //#include "modules/kuhl_m_standard.h"
 //#include "modules/kuhl_m_crypto.h"
 //#include "modules/sekurlsa/kuhl_m_sekurlsa.h"
@@ -39,10 +85,6 @@
 //#include "modules/kuhl_m_rdm.h"
 //#include "modules/kuhl_m_acr.h"
 
-#include <io.h>
-#include <fcntl.h>
-#define DELAYIMP_INSECURE_WRITABLE_HOOKS
-#include <delayimp.h>
 
 extern VOID WINAPI RtlGetNtVersionNumbers(LPDWORD pMajor, LPDWORD pMinor, LPDWORD pBuild);
 
@@ -123,6 +165,12 @@ typedef struct _DSS_GENERICKEY3_BLOB {
 
 typedef wchar_t* CLAIM_ID;
 typedef wchar_t** PCLAIM_ID;
+
+#define NDR_TSI_20 { {0x8a885d04, 0x1ceb, 0x11c9, { 0x9f, 0xe8, 0x08, 0x00, 0x2b, 0x10, 0x48, 0x60 }}, { 2, 0 }}
+
+typedef DWORD NET_API_STATUS;
+typedef UNICODE_STRING RPC_UNICODE_STRING;
+
 
 typedef enum _CLAIM_TYPE {
 	CLAIM_TYPE_INT64 = 1,
@@ -474,45 +522,45 @@ typedef struct _KUHL_M_DPAPI_DOMAINKEY_ENTRY {
 } KUHL_M_DPAPI_DOMAINKEY_ENTRY, * PKUHL_M_DPAPI_DOMAINKEY_ENTRY;
 
 
-typedef struct _KERB_EXTERNAL_NAME123 {
-    SHORT NameType;
-    USHORT NameCount;
-    UNICODE_STRING Names[ANYSIZE_ARRAY];
-} KERB_EXTERNAL_NAME, *PKERB_EXTERNAL_NAME;
+//typedef struct _KERB_EXTERNAL_NAME123 {
+//    SHORT NameType;
+//    USHORT NameCount;
+//    UNICODE_STRING Names[ANYSIZE_ARRAY];
+//} KERB_EXTERNAL_NAME, *PKERB_EXTERNAL_NAME;
 
 
-typedef struct _KERB_EXTERNAL_TICKET {
-    PKERB_EXTERNAL_NAME ServiceName;
-    PKERB_EXTERNAL_NAME TargetName;
-    PKERB_EXTERNAL_NAME ClientName;
-    UNICODE_STRING DomainName;
-    UNICODE_STRING TargetDomainName;
-    UNICODE_STRING AltTargetDomainName;  // contains ClientDomainName
-    KERB_CRYPTO_KEY SessionKey;
-    ULONG TicketFlags;
-    ULONG Flags;
-    LARGE_INTEGER KeyExpirationTime;
-    LARGE_INTEGER StartTime;
-    LARGE_INTEGER EndTime;
-    LARGE_INTEGER RenewUntil;
-    LARGE_INTEGER TimeSkew;
-    ULONG EncodedTicketSize;
-    PUCHAR EncodedTicket;
-} KERB_EXTERNAL_TICKET, *PKERB_EXTERNAL_TICKET;
+//typedef struct _KERB_EXTERNAL_TICKET {
+//    PKERB_EXTERNAL_NAME ServiceName;
+//    PKERB_EXTERNAL_NAME TargetName;
+//    PKERB_EXTERNAL_NAME ClientName;
+//    UNICODE_STRING DomainName;
+//    UNICODE_STRING TargetDomainName;
+//    UNICODE_STRING AltTargetDomainName;  // contains ClientDomainName
+//    KERB_CRYPTO_KEY SessionKey;
+//    ULONG TicketFlags;
+//    ULONG Flags;
+//    LARGE_INTEGER KeyExpirationTime;
+//    LARGE_INTEGER StartTime;
+//    LARGE_INTEGER EndTime;
+//    LARGE_INTEGER RenewUntil;
+//    LARGE_INTEGER TimeSkew;
+//    ULONG EncodedTicketSize;
+//    PUCHAR EncodedTicket;
+//} KERB_EXTERNAL_TICKET, *PKERB_EXTERNAL_TICKET;
 
-typedef struct _KERB_RETRIEVE_TKT_REQUEST {
-    KERB_PROTOCOL_MESSAGE_TYPE MessageType;
-    LUID LogonId;
-    UNICODE_STRING TargetName;
-    ULONG TicketFlags;
-    ULONG CacheOptions;
-    LONG EncryptionType;
-    SecHandle CredentialsHandle;
-} KERB_RETRIEVE_TKT_REQUEST, *PKERB_RETRIEVE_TKT_REQUEST;
-
-typedef struct _KERB_RETRIEVE_TKT_RESPONSE {
-    KERB_EXTERNAL_TICKET Ticket;
-} KERB_RETRIEVE_TKT_RESPONSE, *PKERB_RETRIEVE_TKT_RESPONSE;
+//typedef struct _KERB_RETRIEVE_TKT_REQUEST {
+//    KERB_PROTOCOL_MESSAGE_TYPE MessageType;
+//    LUID LogonId;
+//    UNICODE_STRING TargetName;
+//    ULONG TicketFlags;
+//    ULONG CacheOptions;
+//    LONG EncryptionType;
+//    SecHandle CredentialsHandle;
+//} KERB_RETRIEVE_TKT_REQUEST, *PKERB_RETRIEVE_TKT_REQUEST;
+//
+//typedef struct _KERB_RETRIEVE_TKT_RESPONSE {
+//    KERB_EXTERNAL_TICKET Ticket;
+//} KERB_RETRIEVE_TKT_RESPONSE, *PKERB_RETRIEVE_TKT_RESPONSE;
 
 
 
@@ -608,6 +656,421 @@ typedef struct _KIWI_KERBEROS_TICKET {
 	ULONG		TicketKvno;
 	KIWI_KERBEROS_BUFFER	Ticket;
 } KIWI_KERBEROS_TICKET, * PKIWI_KERBEROS_TICKET;
+
+
+
+typedef PVOID	SAMPR_HANDLE;
+
+typedef enum _USER_INFORMATION_CLASS {
+	UserSetPasswordInformation = 15,
+	UserInternal1Information = 18,
+	UserAllInformation = 21,
+} USER_INFORMATION_CLASS, * PUSER_INFORMATION_CLASS;
+
+typedef struct _SAMPR_SR_SECURITY_DESCRIPTOR {
+	DWORD Length;
+	PUCHAR SecurityDescriptor;
+} SAMPR_SR_SECURITY_DESCRIPTOR, * PSAMPR_SR_SECURITY_DESCRIPTOR;
+
+typedef struct _GROUP_MEMBERSHIP {
+	DWORD RelativeId;
+	DWORD Attributes;
+} GROUP_MEMBERSHIP, * PGROUP_MEMBERSHIP;
+
+#define PACINFO_TYPE_LOGON_INFO				0x00000001
+#define PACINFO_TYPE_CREDENTIALS_INFO		0x00000002
+#define PACINFO_TYPE_CHECKSUM_SRV			0x00000006
+#define PACINFO_TYPE_CHECKSUM_KDC			0x00000007
+#define PACINFO_TYPE_CNAME_TINFO			0x0000000a
+#define PACINFO_TYPE_DELEGATION_INFO		0x0000000b
+#define PACINFO_TYPE_UPN_DNS				0x0000000c
+#define PACINFO_TYPE_CLIENT_CLAIMS			0x0000000d
+#define PACINFO_TYPE_DEVICE_INFO			0x0000000e
+#define PACINFO_TYPE_DEVICE_CLAIMS			0x0000000f
+
+typedef struct _PAC_INFO_BUFFER {
+	ULONG ulType;
+	ULONG cbBufferSize;
+	ULONG64 Offset;
+} PAC_INFO_BUFFER, * PPAC_INFO_BUFFER;
+
+typedef struct _PACTYPE {
+	ULONG cBuffers;
+	ULONG Version;
+	PAC_INFO_BUFFER Buffers[ANYSIZE_ARRAY];
+} PACTYPE, * PPACTYPE;
+
+typedef struct _PAC_CLIENT_INFO {
+	FILETIME ClientId;
+	USHORT NameLength;
+	WCHAR Name[ANYSIZE_ARRAY];
+} PAC_CLIENT_INFO, * PPAC_CLIENT_INFO;
+
+typedef struct _PAC_CREDENTIAL_INFO {
+	ULONG Version;
+	ULONG EncryptionType;
+	UCHAR SerializedData[ANYSIZE_ARRAY];
+} PAC_CREDENTIAL_INFO, * PPAC_CREDENTIAL_INFO;
+
+#if !defined(_NTSECPKG_)
+typedef struct _SECPKG_SUPPLEMENTAL_CRED {
+	RPC_UNICODE_STRING PackageName;
+	ULONG CredentialSize;
+	PUCHAR Credentials;
+} SECPKG_SUPPLEMENTAL_CRED, * PSECPKG_SUPPLEMENTAL_CRED;
+#endif
+
+typedef struct _PAC_CREDENTIAL_DATA {
+	ULONG CredentialCount;
+	SECPKG_SUPPLEMENTAL_CRED Credentials[ANYSIZE_ARRAY];
+} PAC_CREDENTIAL_DATA, * PPAC_CREDENTIAL_DATA;
+
+typedef struct _NTLM_SUPPLEMENTAL_CREDENTIAL {
+	ULONG Version;
+	ULONG Flags;
+	UCHAR LmPassword[LM_NTLM_HASH_LENGTH];
+	UCHAR NtPassword[LM_NTLM_HASH_LENGTH];
+} NTLM_SUPPLEMENTAL_CREDENTIAL, * PNTLM_SUPPLEMENTAL_CREDENTIAL;
+
+typedef struct _UPN_DNS_INFO {
+	USHORT UpnLength;
+	USHORT UpnOffset;
+	USHORT DnsDomainNameLength;
+	USHORT DnsDomainNameOffset;
+	ULONG Flags;
+} UPN_DNS_INFO, * PUPN_DNS_INFO;
+
+typedef struct _S4U_DELEGATION_INFO {
+	RPC_UNICODE_STRING S4U2proxyTarget;
+	ULONG TransitedListSize;
+	RPC_UNICODE_STRING S4UTransitedServices[ANYSIZE_ARRAY];
+} S4U_DELEGATION_INFO, * PS4U_DELEGATION_INFO;
+
+typedef struct _KERB_SID_AND_ATTRIBUTES {
+	PISID Sid;
+	ULONG Attributes;
+} KERB_SID_AND_ATTRIBUTES, * PKERB_SID_AND_ATTRIBUTES;
+
+typedef struct _CYPHER_BLOCK {
+	CHAR data[8];
+} CYPHER_BLOCK, * PCYPHER_BLOCK;
+
+typedef struct _NT_OWF_PASSWORD {
+	CYPHER_BLOCK data[2];
+} NT_OWF_PASSWORD, * PNT_OWF_PASSWORD, ENCRYPTED_NT_OWF_PASSWORD, * PENCRYPTED_NT_OWF_PASSWORD, USER_SESSION_KEY;
+
+typedef struct _KERB_VALIDATION_INFO {
+	FILETIME LogonTime;
+	FILETIME LogoffTime;
+	FILETIME KickOffTime;
+	FILETIME PasswordLastSet;
+	FILETIME PasswordCanChange;
+	FILETIME PasswordMustChange;
+	RPC_UNICODE_STRING EffectiveName;
+	RPC_UNICODE_STRING FullName;
+	RPC_UNICODE_STRING LogonScript;
+	RPC_UNICODE_STRING ProfilePath;
+	RPC_UNICODE_STRING HomeDirectory;
+	RPC_UNICODE_STRING HomeDirectoryDrive;
+	USHORT LogonCount;
+	USHORT BadPasswordCount;
+	ULONG UserId;
+	ULONG PrimaryGroupId;
+	ULONG GroupCount;
+	/* [size_is] */ PGROUP_MEMBERSHIP GroupIds;
+	ULONG UserFlags;
+	USER_SESSION_KEY UserSessionKey;
+	RPC_UNICODE_STRING LogonServer;
+	RPC_UNICODE_STRING LogonDomainName;
+	PISID LogonDomainId;
+	ULONG Reserved1[2];
+	ULONG UserAccountControl;
+	ULONG SubAuthStatus;
+	FILETIME LastSuccessfulILogon;
+	FILETIME LastFailedILogon;
+	ULONG FailedILogonCount;
+	ULONG Reserved3;
+	ULONG SidCount;
+	/* [size_is] */ PKERB_SID_AND_ATTRIBUTES ExtraSids;
+	PISID ResourceGroupDomainSid;
+	ULONG ResourceGroupCount;
+	/* [size_is] */ PGROUP_MEMBERSHIP ResourceGroupIds;
+} KERB_VALIDATION_INFO, * PKERB_VALIDATION_INFO;
+
+
+
+
+
+typedef struct _SAMPR_LOGON_HOURS {
+	unsigned short UnitsPerWeek;
+	unsigned char* LogonHours;
+} SAMPR_LOGON_HOURS, * PSAMPR_LOGON_HOURS;
+
+typedef struct _SAMPR_USER_INTERNAL1_INFORMATION {
+	BYTE NTHash[LM_NTLM_HASH_LENGTH];
+	BYTE LMHash[LM_NTLM_HASH_LENGTH];
+	BYTE NtPasswordPresent;
+	BYTE LmPasswordPresent;
+	BYTE PasswordExpired;
+	BYTE PrivateDataSensitive;
+} SAMPR_USER_INTERNAL1_INFORMATION, * PSAMPR_USER_INTERNAL1_INFORMATION;
+
+typedef struct _SAMPR_USER_ALL_INFORMATION {
+	FILETIME LastLogon;
+	FILETIME LastLogoff;
+	FILETIME PasswordLastSet;
+	FILETIME AccountExpires;
+	FILETIME PasswordCanChange;
+	FILETIME PasswordMustChange;
+	LSA_UNICODE_STRING UserName;
+	LSA_UNICODE_STRING FullName;
+	LSA_UNICODE_STRING HomeDirectory;
+	LSA_UNICODE_STRING HomeDirectoryDrive;
+	LSA_UNICODE_STRING ScriptPath;
+	LSA_UNICODE_STRING ProfilePath;
+	LSA_UNICODE_STRING AdminComment;
+	LSA_UNICODE_STRING WorkStations;
+	LSA_UNICODE_STRING UserComment;
+	LSA_UNICODE_STRING Parameters;
+	LSA_UNICODE_STRING LmOwfPassword;
+	LSA_UNICODE_STRING NtOwfPassword;
+	LSA_UNICODE_STRING PrivateData;
+	SAMPR_SR_SECURITY_DESCRIPTOR SecurityDescriptor;
+	DWORD UserId;
+	DWORD PrimaryGroupId;
+	DWORD UserAccountControl;
+	DWORD WhichFields;
+	SAMPR_LOGON_HOURS LogonHours;
+	WORD BadPasswordCount;
+	WORD LogonCount;
+	WORD CountryCode;
+	WORD CodePage;
+	BOOLEAN LmPasswordPresent;
+	BOOLEAN NtPasswordPresent;
+	BOOLEAN PasswordExpired;
+	BOOLEAN PrivateDataSensitive;
+} SAMPR_USER_ALL_INFORMATION, * PSAMPR_USER_ALL_INFORMATION;
+
+typedef LONGLONG DSTIME;
+typedef LONGLONG USN;
+typedef ULONG ATTRTYP;
+typedef void* DRS_HANDLE;
+
+
+typedef struct _NT4SID {
+	UCHAR Data[28];
+} NT4SID;
+
+typedef struct _OID_t {
+	unsigned int length;
+	BYTE* elements;
+} OID_t;
+
+typedef struct _PrefixTableEntry {
+	ULONG ndx;
+	OID_t prefix;
+} PrefixTableEntry;
+
+typedef struct _SCHEMA_PREFIX_TABLE {
+	DWORD PrefixCount;
+	PrefixTableEntry* pPrefixEntry;
+} SCHEMA_PREFIX_TABLE;
+
+
+typedef struct _PARTIAL_ATTR_VECTOR_V1_EXT {
+	DWORD dwVersion;
+	DWORD dwReserved1;
+	DWORD cAttrs;
+	ATTRTYP rgPartialAttr[ANYSIZE_ARRAY];
+} PARTIAL_ATTR_VECTOR_V1_EXT;
+
+typedef struct _ATTRVAL {
+	ULONG valLen;
+	UCHAR* pVal;
+} ATTRVAL;
+
+typedef struct _ATTRVALBLOCK {
+	ULONG valCount;
+	ATTRVAL* pAVal;
+} ATTRVALBLOCK;
+
+typedef struct _ATTR {
+	ATTRTYP attrTyp;
+	ATTRVALBLOCK AttrVal;
+} ATTR;
+
+typedef struct _ATTRBLOCK {
+	ULONG attrCount;
+	ATTR* pAttr;
+} ATTRBLOCK;
+
+
+const wchar_t* KULL_M_REGISTRY_TYPE_WSTRING[];
+
+typedef enum _KULL_M_REGISTRY_TYPE
+{
+	KULL_M_REGISTRY_TYPE_OWN,
+	KULL_M_REGISTRY_TYPE_HIVE,
+} KULL_M_REGISTRY_TYPE;
+
+
+typedef struct _KULL_M_REGISTRY_HIVE_KEY_NAMED
+{
+	LONG szCell;
+	WORD tag;
+	WORD flags;
+	FILETIME lastModification;
+	DWORD unk0;
+	LONG offsetParentKey;
+	DWORD nbSubKeys;
+	DWORD nbVolatileSubKeys;
+	LONG offsetSubKeys;
+	LONG offsetVolatileSubkeys;
+	DWORD nbValues;
+	LONG offsetValues;
+	LONG offsetSecurityKey;
+	LONG offsetClassName;
+	DWORD szMaxSubKeyName;
+	DWORD szMaxSubKeyClassName;
+	DWORD szMaxValueName;
+	DWORD szMaxValueData;
+	DWORD unk1;
+	WORD szKeyName;
+	WORD szClassName;
+	BYTE keyName[ANYSIZE_ARRAY];
+} KULL_M_REGISTRY_HIVE_KEY_NAMED, * PKULL_M_REGISTRY_HIVE_KEY_NAMED;
+
+typedef struct _KULL_M_REGISTRY_HIVE_HANDLE
+{
+	HANDLE hFileMapping;
+	LPVOID pMapViewOfFile;
+	PBYTE pStartOf;
+	PKULL_M_REGISTRY_HIVE_KEY_NAMED pRootNamedKey;
+} KULL_M_REGISTRY_HIVE_HANDLE, * PKULL_M_REGISTRY_HIVE_HANDLE;
+
+typedef struct _KULL_M_REGISTRY_HANDLE {
+	KULL_M_REGISTRY_TYPE type;
+	union {
+		PKULL_M_REGISTRY_HIVE_HANDLE pHandleHive;
+	};
+} KULL_M_REGISTRY_HANDLE, * PKULL_M_REGISTRY_HANDLE;
+
+
+typedef wchar_t* LOGONSRV_HANDLE;
+typedef struct _NETLOGON_CREDENTIAL {
+	CHAR data[8];
+} NETLOGON_CREDENTIAL, * PNETLOGON_CREDENTIAL;
+
+
+typedef  enum _NETLOGON_SECURE_CHANNEL_TYPE {
+	NullSecureChannel = 0,
+	MsvApSecureChannel = 1,
+	WorkstationSecureChannel = 2,
+	TrustedDnsDomainSecureChannel = 3,
+	TrustedDomainSecureChannel = 4,
+	UasServerSecureChannel = 5,
+	ServerSecureChannel = 6,
+	CdcServerSecureChannel = 7
+} NETLOGON_SECURE_CHANNEL_TYPE;
+
+
+typedef struct _NETLOGON_AUTHENTICATOR {
+	NETLOGON_CREDENTIAL Credential;
+	DWORD Timestamp;
+} NETLOGON_AUTHENTICATOR, * PNETLOGON_AUTHENTICATOR;
+
+typedef struct _NL_TRUST_PASSWORD {
+	WCHAR Buffer[256];
+	ULONG Length;
+} NL_TRUST_PASSWORD, * PNL_TRUST_PASSWORD;
+
+
+typedef union _SAMPR_USER_INFO_BUFFER {
+	SAMPR_USER_INTERNAL1_INFORMATION Internal1;
+	SAMPR_USER_ALL_INFORMATION All;
+} SAMPR_USER_INFO_BUFFER, * PSAMPR_USER_INFO_BUFFER;
+
+
+
+typedef struct _REMOTE_LIB_OUTPUT_DATA {
+	PVOID		outputVoid;
+	DWORD		outputDword;
+	NTSTATUS	outputStatus;
+	DWORD		outputSize;
+	PVOID		outputData;
+} REMOTE_LIB_OUTPUT_DATA, * PREMOTE_LIB_OUTPUT_DATA;
+
+typedef struct _REMOTE_LIB_INPUT_DATA {
+	PVOID		inputVoid;
+	DWORD		inputDword;
+	DWORD		inputSize;
+	BYTE		inputData[ANYSIZE_ARRAY];
+} REMOTE_LIB_INPUT_DATA, * PREMOTE_LIB_INPUT_DATA;
+
+typedef struct _REMOTE_LIB_DATA {
+	REMOTE_LIB_OUTPUT_DATA	output;
+	REMOTE_LIB_INPUT_DATA	input;
+} REMOTE_LIB_DATA, * PREMOTE_LIB_DATA;
+
+
+#define PRINTER_NOTIFY_CATEGORY_ALL	0x00010000
+#define APD_INSTALL_WARNED_DRIVER	0x00008000
+
+typedef void* PRINTER_HANDLE;
+
+typedef wchar_t* STRING_HANDLE;
+
+typedef struct _DEVMODE_CONTAINER {
+	DWORD cbBuf;
+	BYTE* pDevMode;
+} DEVMODE_CONTAINER;
+
+typedef struct __DRIVER_INFO_2 {
+	DWORD cVersion;
+	DWORD NameOffset;
+	DWORD EnvironmentOffset;
+	DWORD DriverPathOffset;
+	DWORD DataFileOffset;
+	DWORD ConfigFileOffset;
+} _DRIVER_INFO_2, * _PDRIVER_INFO_2;
+
+typedef struct _RPC_DRIVER_INFO_3 {
+	DWORD cVersion;
+	wchar_t* pName;
+	wchar_t* pEnvironment;
+	wchar_t* pDriverPath;
+	wchar_t* pDataFile;
+	wchar_t* pConfigFile;
+	wchar_t* pHelpFile;
+	wchar_t* pMonitorName;
+	wchar_t* pDefaultDataType;
+	DWORD cchDependentFiles;
+	wchar_t* pDependentFiles;
+} RPC_DRIVER_INFO_3;
+
+
+
+typedef LONG KPRIORITY;
+
+typedef struct _SYSTEM_PROCESS_INFORMATION {
+	ULONG NextEntryOffset;
+	ULONG NumberOfThreads;
+	LARGE_INTEGER Reserved[3];
+	LARGE_INTEGER CreateTime;
+	LARGE_INTEGER UserTime;
+	LARGE_INTEGER KernelTime;
+	UNICODE_STRING ImageName;
+	KPRIORITY BasePriority;
+	HANDLE UniqueProcessId;
+	HANDLE ParentProcessId;
+	ULONG HandleCount;
+	LPCWSTR Reserved2[2];
+	ULONG PrivatePageCount;
+	VM_COUNTERS VirtualMemoryCounters;
+	IO_COUNTERS IoCounters;
+	SYSTEM_THREAD Threads[ANYSIZE_ARRAY];
+} SYSTEM_PROCESS_INFORMATION, * PSYSTEM_PROCESS_INFORMATION;
+
 
 ////////////////////////////////////////////////////////////////
 /*	Benjamin DELPY `gentilkiwi`
@@ -1313,7 +1776,7 @@ BOOL kuhl_m_crypto_c_sc_auth_quickEncode(__in LPCSTR lpszStructType, __in const 
 */
 //#pragma once
 //#include "../kuhl_m_crypto.h"
-#include <cardmod.h>
+
 ////#include "../../../modules/kull_m_crypto.h"
 
 NTSTATUS kuhl_m_crypto_l_sc(int argc, wchar_t * argv[]);
@@ -1643,7 +2106,11 @@ NTSTATUS kuhl_m_kerberos_hash_data_raw(LONG keyType, PCUNICODE_STRING pString, P
 NTSTATUS kuhl_m_kerberos_hash_data(LONG keyType, PCUNICODE_STRING pString, PCUNICODE_STRING pSalt, DWORD count);
 wchar_t * kuhl_m_kerberos_generateFileName(const DWORD index, PKERB_TICKET_CACHE_INFO_EX ticket, LPCWSTR ext);
 wchar_t * kuhl_m_kerberos_generateFileName_short(PKIWI_KERBEROS_TICKET ticket, LPCWSTR ext);
-PBERVAL kuhl_m_kerberos_golden_data(LPCWSTR username, LPCWSTR domainname, LPCWSTR servicename, LPCWSTR targetname, PKUHL_M_KERBEROS_LIFETIME_DATA lifetime, LPCBYTE key, DWORD keySize, DWORD keyType, PISID sid, LPCWSTR LogonDomainName, DWORD userid, PGROUP_MEMBERSHIP groups, DWORD cbGroups, PKERB_SID_AND_ATTRIBUTES sids, DWORD cbSids, DWORD rodc, PCLAIMS_SET pClaimsSet);
+PBERVAL kuhl_m_kerberos_golden_data(LPCWSTR username, LPCWSTR domainname, LPCWSTR servicename, 
+									LPCWSTR targetname, PKUHL_M_KERBEROS_LIFETIME_DATA lifetime, 
+									LPCBYTE key, DWORD keySize, DWORD keyType, PISID sid, LPCWSTR LogonDomainName, 
+									DWORD userid, PGROUP_MEMBERSHIP groups, DWORD cbGroups, PKERB_SID_AND_ATTRIBUTES sids, 
+									DWORD cbSids, DWORD rodc, PCLAIMS_SET pClaimsSet);
 NTSTATUS kuhl_m_kerberos_encrypt(ULONG eType, ULONG keyUsage, LPCVOID key, DWORD keySize, LPCVOID data, DWORD dataSize, LPVOID *output, DWORD *outputSize, BOOL encrypt);
 
 /*	Benjamin DELPY `gentilkiwi`
@@ -2802,13 +3269,7 @@ void kuhl_m_minesweeper_infos_parseField(PKULL_M_MEMORY_HANDLE hMemory, PSTRUCT_
 //#include "../../modules/rpc/kull_m_rpc_ms-rprn.h"
 //#include "../../modules/rpc/kull_m_rpc_ms-par.h"
 //#include "../../modules/rpc/kull_m_rpc_ms-efsr.h"
-#include <fltUser.h>
-#include <sql.h>
-#pragma warning(push)
-#pragma warning(disable:4201)
-#include <sqlext.h>
-#pragma warning(pop)
-#include <sqltypes.h>
+
 
 const KUHL_M kuhl_m_misc;
 
@@ -2934,7 +3395,7 @@ interface IProofOfPossessionCookieInfoManager {
 //#include "../../modules/kull_m_net.h"
 //#include "../../modules/kull_m_token.h"
 //#include "../../modules/rpc/kull_m_rpc_ms-dcom_IObjectExporter.h"
-#include <WinDNS.h>
+
 
 const KUHL_M kuhl_m_net;
 
@@ -3980,7 +4441,7 @@ NTSTATUS kuhl_m_dpapi_citrix(int argc, wchar_t * argv[]);
 //#pragma once
 //#include "../kuhl_m_dpapi.h"
 //#include "../../../../modules/kull_m_crypto_ngc.h"
-#include <time.h>
+
 
 NTSTATUS kuhl_m_dpapi_cloudap_keyvalue_derived(int argc, wchar_t * argv[]);
 NTSTATUS kuhl_m_dpapi_cloudap_fromreg(int argc, wchar_t * argv[]);
@@ -4093,7 +4554,7 @@ void kuhl_m_dpapi_rdg_Credentials(DWORD level, IXMLDOMNode *pNode, int argc, wch
 //#include "../kuhl_m_dpapi.h"
 //#include "../../../../modules/kull_m_string.h"
 //#include "../../../../modules/kull_m_crypto.h"
-#include <wbemidl.h>
+
 
 typedef struct _SCCM_Policy_Secret {
 	DWORD cbData;
@@ -5801,23 +6262,18 @@ typedef struct _KIWI_MSV1_0_LIST_63 {
 #define __REQUIRED_RPCNDR_H_VERSION__ 475
 #endif
 
-#include <rpc.h>
-#include <rpcndr.h>
+
 
 #ifndef __RPCNDR_H_VERSION__
 #error this stub requires an updated version of <rpcndr.h>
 #endif // __RPCNDR_H_VERSION__
 
 //#include "midles.h"
-#include <string.h>
+
 //#include "../kull_m_string.h"
 //#include "../kull_m_crypto.h"
 //#include "../kull_m_process.h"
 
-#define NDR_TSI_20 { {0x8a885d04, 0x1ceb, 0x11c9, { 0x9f, 0xe8, 0x08, 0x00, 0x2b, 0x10, 0x48, 0x60 }}, { 2, 0 }}
-
-typedef DWORD NET_API_STATUS;
-typedef UNICODE_STRING RPC_UNICODE_STRING;
 
 LPCWSTR KULL_M_RPC_AUTHNLEV[7];
 LPCWSTR KULL_M_RPC_AUTHNSVC(DWORD AuthnSvc);
@@ -6352,14 +6808,9 @@ error_status_t ServerAlive2(handle_t hRpc, COMVERSION *pComVersion, DUALSTRINGAR
 //#pragma once
 //#include "kull_m_rpc.h"
 
-typedef LONGLONG DSTIME;
-typedef LONGLONG USN;
-typedef ULONG ATTRTYP;
-typedef void *DRS_HANDLE;
 
-typedef struct _NT4SID {
-	UCHAR Data[28];
-} NT4SID;
+
+
 
 typedef struct _DSNAME {
 	ULONG structLen;
@@ -6389,47 +6840,9 @@ typedef struct _UPTODATE_VECTOR_V1_EXT {
 	UPTODATE_CURSOR_V1 rgCursors[ANYSIZE_ARRAY];
 } UPTODATE_VECTOR_V1_EXT;
 
-typedef struct _OID_t {
-	unsigned int length;
-	BYTE *elements;
-} OID_t;
 
-typedef struct _PrefixTableEntry {
-	ULONG ndx;
-	OID_t prefix;
-} PrefixTableEntry;
 
-typedef struct _SCHEMA_PREFIX_TABLE {
-	DWORD PrefixCount;
-	PrefixTableEntry *pPrefixEntry;
-} SCHEMA_PREFIX_TABLE;
 
-typedef struct _PARTIAL_ATTR_VECTOR_V1_EXT {
-	DWORD dwVersion;
-	DWORD dwReserved1;
-	DWORD cAttrs;
-	ATTRTYP rgPartialAttr[ANYSIZE_ARRAY];
-} PARTIAL_ATTR_VECTOR_V1_EXT;
-
-typedef struct _ATTRVAL {
-	ULONG valLen;
-	UCHAR *pVal;
-} ATTRVAL;
-
-typedef struct _ATTRVALBLOCK {
-	ULONG valCount;
-	ATTRVAL *pAVal;
-} ATTRVALBLOCK;
-
-typedef struct _ATTR {
-	ATTRTYP attrTyp;
-	ATTRVALBLOCK AttrVal;
-} ATTR;
-
-typedef struct _ATTRBLOCK {
-	ULONG attrCount;
-	ATTR *pAttr;
-} ATTRBLOCK;
 
 typedef struct _ENTINF {
 	DSNAME *pName;
@@ -6761,31 +7174,10 @@ RPC_IF_HANDLE efsrpc_v1_0_c_ifspec;
 //#include "kull_m_rpc.h"
 //#include "../kull_m_samlib.h"
 
-typedef wchar_t * LOGONSRV_HANDLE;
-typedef struct _NETLOGON_CREDENTIAL {
-	CHAR data[8]; 
-} NETLOGON_CREDENTIAL, *PNETLOGON_CREDENTIAL;
 
-typedef  enum _NETLOGON_SECURE_CHANNEL_TYPE {
-	NullSecureChannel = 0,
-	MsvApSecureChannel = 1,
-	WorkstationSecureChannel = 2,
-	TrustedDnsDomainSecureChannel = 3,
-	TrustedDomainSecureChannel = 4,
-	UasServerSecureChannel = 5,
-	ServerSecureChannel = 6,
-	CdcServerSecureChannel = 7
-} NETLOGON_SECURE_CHANNEL_TYPE;
 
-typedef struct _NETLOGON_AUTHENTICATOR {
-	NETLOGON_CREDENTIAL Credential;
-	DWORD Timestamp;
-} NETLOGON_AUTHENTICATOR, *PNETLOGON_AUTHENTICATOR;
 
-typedef struct _NL_TRUST_PASSWORD {
-	WCHAR Buffer[256];
-	ULONG Length;
-} NL_TRUST_PASSWORD, *PNL_TRUST_PASSWORD;
+
 
 NTSTATUS NetrServerReqChallenge(IN LOGONSRV_HANDLE PrimaryName, IN wchar_t *ComputerName, IN PNETLOGON_CREDENTIAL ClientChallenge, OUT PNETLOGON_CREDENTIAL ServerChallenge);
 NTSTATUS NetrServerAuthenticate2(IN LOGONSRV_HANDLE PrimaryName, IN wchar_t *AccountName, IN NETLOGON_SECURE_CHANNEL_TYPE SecureChannelType, IN wchar_t *ComputerName, IN PNETLOGON_CREDENTIAL ClientCredential, OUT PNETLOGON_CREDENTIAL ServerCredential, IN OUT ULONG *NegotiateFlags);
@@ -6802,117 +7194,8 @@ void __RPC_USER LOGONSRV_HANDLE_unbind(IN LOGONSRV_HANDLE Name, handle_t hLogon)
 //#include "kull_m_rpc.h"
 //#include "../kull_m_samlib.h"
 
-#define PACINFO_TYPE_LOGON_INFO				0x00000001
-#define PACINFO_TYPE_CREDENTIALS_INFO		0x00000002
-#define PACINFO_TYPE_CHECKSUM_SRV			0x00000006
-#define PACINFO_TYPE_CHECKSUM_KDC			0x00000007
-#define PACINFO_TYPE_CNAME_TINFO			0x0000000a
-#define PACINFO_TYPE_DELEGATION_INFO		0x0000000b
-#define PACINFO_TYPE_UPN_DNS				0x0000000c
-#define PACINFO_TYPE_CLIENT_CLAIMS			0x0000000d
-#define PACINFO_TYPE_DEVICE_INFO			0x0000000e
-#define PACINFO_TYPE_DEVICE_CLAIMS			0x0000000f
 
-typedef struct _PAC_INFO_BUFFER {
-	ULONG ulType;
-	ULONG cbBufferSize;
-	ULONG64 Offset;
-} PAC_INFO_BUFFER, *PPAC_INFO_BUFFER;
 
-typedef struct _PACTYPE {
-	ULONG cBuffers;
-	ULONG Version;
-	PAC_INFO_BUFFER Buffers[ANYSIZE_ARRAY];
-} PACTYPE, *PPACTYPE;
-
-typedef struct _PAC_CLIENT_INFO {
-	FILETIME ClientId;
-	USHORT NameLength;
-	WCHAR Name[ANYSIZE_ARRAY];
-} PAC_CLIENT_INFO, *PPAC_CLIENT_INFO;
-
-typedef struct _PAC_CREDENTIAL_INFO {
-	ULONG Version;
-	ULONG EncryptionType;
-	UCHAR SerializedData[ANYSIZE_ARRAY];
-} PAC_CREDENTIAL_INFO, *PPAC_CREDENTIAL_INFO;
-
-#if !defined(_NTSECPKG_)
-typedef struct _SECPKG_SUPPLEMENTAL_CRED {
-	RPC_UNICODE_STRING PackageName;
-	ULONG CredentialSize;
-	PUCHAR Credentials;
-} SECPKG_SUPPLEMENTAL_CRED, *PSECPKG_SUPPLEMENTAL_CRED;
-#endif
-
-typedef struct _PAC_CREDENTIAL_DATA {
-	ULONG CredentialCount;
-	SECPKG_SUPPLEMENTAL_CRED Credentials[ANYSIZE_ARRAY];
-} PAC_CREDENTIAL_DATA, *PPAC_CREDENTIAL_DATA;
-
-typedef struct _NTLM_SUPPLEMENTAL_CREDENTIAL {
-	ULONG Version;
-	ULONG Flags;
-	UCHAR LmPassword[LM_NTLM_HASH_LENGTH];
-	UCHAR NtPassword[LM_NTLM_HASH_LENGTH];
-} NTLM_SUPPLEMENTAL_CREDENTIAL, *PNTLM_SUPPLEMENTAL_CREDENTIAL;
-
-typedef struct _UPN_DNS_INFO {
-	USHORT UpnLength;
-	USHORT UpnOffset;
-	USHORT DnsDomainNameLength;
-	USHORT DnsDomainNameOffset;
-	ULONG Flags;
-} UPN_DNS_INFO, *PUPN_DNS_INFO;
-
-typedef struct _S4U_DELEGATION_INFO {
-	RPC_UNICODE_STRING S4U2proxyTarget;
-	ULONG TransitedListSize;
-	RPC_UNICODE_STRING S4UTransitedServices[ANYSIZE_ARRAY];
-} S4U_DELEGATION_INFO, *PS4U_DELEGATION_INFO;
-
-typedef struct _KERB_SID_AND_ATTRIBUTES {
-	PISID Sid;
-	ULONG Attributes;
-} KERB_SID_AND_ATTRIBUTES, *PKERB_SID_AND_ATTRIBUTES;
-
-typedef struct _KERB_VALIDATION_INFO {
-	FILETIME LogonTime;
-	FILETIME LogoffTime;
-	FILETIME KickOffTime;
-	FILETIME PasswordLastSet;
-	FILETIME PasswordCanChange;
-	FILETIME PasswordMustChange;
-	RPC_UNICODE_STRING EffectiveName;
-	RPC_UNICODE_STRING FullName;
-	RPC_UNICODE_STRING LogonScript;
-	RPC_UNICODE_STRING ProfilePath;
-	RPC_UNICODE_STRING HomeDirectory;
-	RPC_UNICODE_STRING HomeDirectoryDrive;
-	USHORT LogonCount;
-	USHORT BadPasswordCount;
-	ULONG UserId;
-	ULONG PrimaryGroupId;
-	ULONG GroupCount;
-	/* [size_is] */ PGROUP_MEMBERSHIP GroupIds;
-	ULONG UserFlags;
-	USER_SESSION_KEY UserSessionKey;
-	RPC_UNICODE_STRING LogonServer;
-	RPC_UNICODE_STRING LogonDomainName;
-	PISID LogonDomainId;
-	ULONG Reserved1[ 2 ];
-	ULONG UserAccountControl;
-	ULONG SubAuthStatus;
-	FILETIME LastSuccessfulILogon;
-	FILETIME LastFailedILogon;
-	ULONG FailedILogonCount;
-	ULONG Reserved3;
-	ULONG SidCount;
-	/* [size_is] */ PKERB_SID_AND_ATTRIBUTES ExtraSids;
-	PISID ResourceGroupDomainSid;
-	ULONG ResourceGroupCount;
-	/* [size_is] */ PGROUP_MEMBERSHIP ResourceGroupIds;
-} KERB_VALIDATION_INFO, *PKERB_VALIDATION_INFO;
 
 void PPAC_CREDENTIAL_DATA_Decode(handle_t _MidlEsHandle, PPAC_CREDENTIAL_DATA * _pType);
 void PPAC_CREDENTIAL_DATA_Free(handle_t _MidlEsHandle, PPAC_CREDENTIAL_DATA * _pType);
@@ -6982,40 +7265,7 @@ DWORD RpcAsyncDeletePrinterDriverEx(handle_t hRemoteBinding, wchar_t *pName, wch
 #define PRINTER_CHANGE_ADD_JOB	0x00000100
 #define PRINTER_CHANGE_ALL		0x7777FFFF
 */
-#define PRINTER_NOTIFY_CATEGORY_ALL	0x00010000
-#define APD_INSTALL_WARNED_DRIVER	0x00008000
 
-typedef void *PRINTER_HANDLE;
-
-typedef wchar_t *STRING_HANDLE;
-
-typedef struct _DEVMODE_CONTAINER {
-	DWORD cbBuf;
-	BYTE *pDevMode;
-} DEVMODE_CONTAINER;
-
-typedef struct __DRIVER_INFO_2 {
-	DWORD cVersion;
-	DWORD NameOffset;
-	DWORD EnvironmentOffset;
-	DWORD DriverPathOffset;
-	DWORD DataFileOffset;
-	DWORD ConfigFileOffset;
-} _DRIVER_INFO_2, *_PDRIVER_INFO_2;
-
-typedef struct _RPC_DRIVER_INFO_3 {
-	DWORD cVersion;
-	wchar_t *pName;
-	wchar_t *pEnvironment;
-	wchar_t *pDriverPath;
-	wchar_t *pDataFile;
-	wchar_t *pConfigFile;
-	wchar_t *pHelpFile;
-	wchar_t *pMonitorName;
-	wchar_t *pDefaultDataType;
-	DWORD cchDependentFiles;
-	wchar_t *pDependentFiles;
-} RPC_DRIVER_INFO_3;
 
 typedef struct _RPC_DRIVER_INFO_4 {
     DWORD cVersion;
@@ -7149,9 +7399,7 @@ BOOL CALLBACK kull_m_arcr_SendRecvDirect(const BYTE *pbData, const UINT16 cbData
 */
 //#pragma once
 //#include "globals.h"
-#include <Winldap.h>
-#include <Winber.h>
-#include <msasn1.h>
+
 //#include "kull_m_string.h"
 
 #define DIRTY_ASN1_ID_BOOLEAN			0x01
@@ -7336,8 +7584,7 @@ BOOL kull_m_busylight_request_single_send(PBUSYLIGHT_DEVICE device, const BUSYLI
 */
 //#pragma once
 //#include "globals.h"
-#include <strsafe.h>
-#include <fci.h>
+
 
 LPCSTR FCIErrorToString(FCIERROR err);
 
@@ -8376,7 +8623,7 @@ void kull_m_dpapi_displayBlobFlags(DWORD flags);
 */
 //#pragma once
 //#include "globals.h"
-#include <shlwapi.h>
+
 //#include "kull_m_string.h"
 
 BOOL isBase64InterceptOutput, isBase64InterceptInput;
@@ -8512,7 +8759,7 @@ BOOL kull_m_handle_GetUserObjectInformation(HANDLE hObj, int nIndex, PVOID *pvIn
 //#pragma once
 //#include "globals.h"
 
-#include <pshpack4.h>
+
 typedef struct _HIDP_PREPARSED_DATA * PHIDP_PREPARSED_DATA;
 
 typedef USHORT USAGE, *PUSAGE;
@@ -8554,13 +8801,7 @@ extern BOOLEAN __stdcall HidD_GetPreparsedData(__in HANDLE HidDeviceObject, __ou
 extern BOOLEAN __stdcall HidD_FreePreparsedData(__in PHIDP_PREPARSED_DATA PreparsedData);
 extern BOOLEAN __stdcall HidD_SetFeature(__in HANDLE HidDeviceObject, __in PVOID ReportBuffer, __in ULONG ReportBufferLength);
 extern BOOLEAN __stdcall HidD_GetFeature(__in HANDLE HidDeviceObject, __out PVOID ReportBuffer, __in ULONG ReportBufferLength);
-#include <poppack.h>
 
-#if defined(_M_X64) || defined(_M_ARM64) // TODO:ARM64
-#include <pshpack8.h>   // Assume 8-byte (64-bit) packing throughout
-#elif defined(_M_IX86)
-#include <pshpack1.h>   // Assume byte packing throughout (32-bit processor)
-#endif
 #define DIGCF_DEFAULT           0x00000001  // only valid with DIGCF_DEVICEINTERFACE
 #define DIGCF_PRESENT           0x00000002
 #define DIGCF_ALLCLASSES        0x00000004
@@ -8599,7 +8840,7 @@ extern WINSETUPAPI BOOL SetupDiEnumDeviceInfo(__in HDEVINFO DeviceInfoSet, __in 
 #define SetupDiGetClassDevs SetupDiGetClassDevsW
 #define SetupDiGetDeviceInterfaceDetail SetupDiGetDeviceInterfaceDetailW
 #define SetupDiGetDeviceRegistryProperty SetupDiGetDeviceRegistryPropertyW
-#include <poppack.h>
+
 
 /*	Benjamin DELPY `gentilkiwi`
 	https://blog.gentilkiwi.com
@@ -8608,7 +8849,7 @@ extern WINSETUPAPI BOOL SetupDiEnumDeviceInfo(__in HDEVINFO DeviceInfoSet, __in 
 */
 //#pragma once
 //#include "globals.h"
-#include <winioctl.h>
+
 //#include "../mimidrv/ioctl.h"
 
 BOOL kull_m_kernel_ioctl_handle(HANDLE hDriver, DWORD ioctlCode, PVOID bufferIn, DWORD szBufferIn, PVOID * pBufferOut, PDWORD pSzBufferOut, BOOL autobuffer);
@@ -8768,8 +9009,7 @@ typedef struct PCP_KEY_BLOB {
 */
 //#pragma once
 //#include "globals.h"
-#include <Winldap.h>
-#include <WinBer.h>
+
 //#include "kull_m_string.h"
 
 BOOL kull_m_ldap_getLdapAndRootDN(PCWCHAR system, PCWCHAR nc, PLDAP *ld, PWCHAR *rootDn, PSEC_WINNT_AUTH_IDENTITY pIdentity);
@@ -8903,7 +9143,7 @@ typedef struct _MIFARE_CLASSIC_RAW_CARD {
 */
 //#pragma once
 //#include "globals.h"
-#include <dbghelp.h>
+
 
 
 
@@ -8922,7 +9162,7 @@ LPVOID kull_m_minidump_remapVirtualMemory64(IN PKULL_M_MINIDUMP_HANDLE hMinidump
 */
 //#pragma once
 //#include "globals.h"
-#include <DsGetDC.h>
+
 
 extern DWORD WINAPI NetApiBufferFree (IN LPVOID Buffer);
 
@@ -9137,8 +9377,7 @@ NET_API_STATUS NET_API_FUNCTION NetServerGetInfo(IN LPWSTR servername, IN DWORD 
 */
 //#pragma once
 //#include "globals.h"
-#include <io.h>
-#include <fcntl.h>
+
 
 FILE * logfile;
 #if !defined(MIMIKATZ_W2000_SUPPORT)
@@ -9377,7 +9616,7 @@ BOOL kull_m_pn532_Mifare_Classic_ReadSectorWithKey(PKULL_M_PN532_COMM comm, PPN5
 */
 //#pragma once
 //#include "globals.h"
-#include <userenv.h>
+
 //#include "kull_m_memory.h"
 //#include "kull_m_string.h"
 
@@ -9501,7 +9740,7 @@ typedef enum _PROCESSINFOCLASS {
 	MaxProcessInfoClass			 // MaxProcessInfoClass should always be the last enum
 } PROCESSINFOCLASS;
 
-typedef LONG KPRIORITY;
+
 
 typedef struct _VM_COUNTERS {
 	SIZE_T PeakVirtualSize;
@@ -9597,24 +9836,6 @@ typedef struct _SYSTEM_BASIC_INFORMATION {
     UCHAR NumberOfProcessors;
 } SYSTEM_BASIC_INFORMATION, *PSYSTEM_BASIC_INFORMATION;
 
-typedef struct _SYSTEM_PROCESS_INFORMATION {
-	ULONG NextEntryOffset;
-	ULONG NumberOfThreads;
-	LARGE_INTEGER Reserved[3];
-	LARGE_INTEGER CreateTime;
-	LARGE_INTEGER UserTime;
-	LARGE_INTEGER KernelTime;
-	UNICODE_STRING ImageName;
-	KPRIORITY BasePriority;
-	HANDLE UniqueProcessId;
-	HANDLE ParentProcessId;
-	ULONG HandleCount;
-	LPCWSTR Reserved2[2];
-	ULONG PrivatePageCount;
-	VM_COUNTERS VirtualMemoryCounters;
-	IO_COUNTERS IoCounters;
-	SYSTEM_THREAD Threads[ANYSIZE_ARRAY];
-} SYSTEM_PROCESS_INFORMATION, *PSYSTEM_PROCESS_INFORMATION;
 
 typedef struct _LDR_DATA_TABLE_ENTRY
 {
@@ -9984,28 +10205,7 @@ void rdm_devices_free(PRDM_DEVICE devices);
 //#include "kull_m_registry_structures.h"
 //#include "kull_m_string.h"
 
-const wchar_t *KULL_M_REGISTRY_TYPE_WSTRING[];
 
-typedef enum _KULL_M_REGISTRY_TYPE
-{
-	KULL_M_REGISTRY_TYPE_OWN,
-	KULL_M_REGISTRY_TYPE_HIVE,
-} KULL_M_REGISTRY_TYPE;
-
-typedef struct _KULL_M_REGISTRY_HIVE_HANDLE
-{
-	HANDLE hFileMapping;
-	LPVOID pMapViewOfFile;
-	PBYTE pStartOf;
-	PKULL_M_REGISTRY_HIVE_KEY_NAMED pRootNamedKey;
-} KULL_M_REGISTRY_HIVE_HANDLE, *PKULL_M_REGISTRY_HIVE_HANDLE;
-
-typedef struct _KULL_M_REGISTRY_HANDLE {
-	KULL_M_REGISTRY_TYPE type;
-	union {
-		PKULL_M_REGISTRY_HIVE_HANDLE pHandleHive;
-	};
-} KULL_M_REGISTRY_HANDLE, *PKULL_M_REGISTRY_HANDLE;
 
 BOOL kull_m_registry_open(IN KULL_M_REGISTRY_TYPE Type, IN HANDLE hAny, BOOL isWrite, OUT PKULL_M_REGISTRY_HANDLE *hRegistry);
 PKULL_M_REGISTRY_HANDLE kull_m_registry_close(IN PKULL_M_REGISTRY_HANDLE hRegistry);
@@ -10081,31 +10281,7 @@ typedef struct _KULL_M_REGISTRY_HIVE_BIN_CELL
 	};
 } KULL_M_REGISTRY_HIVE_BIN_CELL, *PKULL_M_REGISTRY_HIVE_BIN_CELL;
 
-typedef struct _KULL_M_REGISTRY_HIVE_KEY_NAMED
-{
-	LONG szCell;
-	WORD tag;
-	WORD flags;
-	FILETIME lastModification;
-	DWORD unk0;
-	LONG offsetParentKey;
-	DWORD nbSubKeys;
-	DWORD nbVolatileSubKeys;
-	LONG offsetSubKeys;
-	LONG offsetVolatileSubkeys;
-	DWORD nbValues;
-	LONG offsetValues;
-	LONG offsetSecurityKey;
-	LONG offsetClassName;
-	DWORD szMaxSubKeyName;
-	DWORD szMaxSubKeyClassName;
-	DWORD szMaxValueName;
-	DWORD szMaxValueData;
-	DWORD unk1;
-	WORD szKeyName;
-	WORD szClassName;
-	BYTE keyName[ANYSIZE_ARRAY];
-} KULL_M_REGISTRY_HIVE_KEY_NAMED, *PKULL_M_REGISTRY_HIVE_KEY_NAMED;
+
 
 typedef struct _KULL_M_REGISTRY_HIVE_VALUE_KEY
 {
@@ -10149,25 +10325,7 @@ typedef struct _KULL_M_REGISTRY_HIVE_VALUE_LIST
 //#include "globals.h"
 //#include "../modules/kull_m_process.h"
 
-typedef struct _REMOTE_LIB_OUTPUT_DATA {
-	PVOID		outputVoid;
-	DWORD		outputDword;
-	NTSTATUS	outputStatus;
-	DWORD		outputSize;
-	PVOID		outputData;
-} REMOTE_LIB_OUTPUT_DATA, *PREMOTE_LIB_OUTPUT_DATA;
 
-typedef struct _REMOTE_LIB_INPUT_DATA {
-	PVOID		inputVoid;
-	DWORD		inputDword;
-	DWORD		inputSize;
-	BYTE		inputData[ANYSIZE_ARRAY];
-} REMOTE_LIB_INPUT_DATA, *PREMOTE_LIB_INPUT_DATA;
-
-typedef struct _REMOTE_LIB_DATA {
-	REMOTE_LIB_OUTPUT_DATA	output;
-	REMOTE_LIB_INPUT_DATA	input;
-} REMOTE_LIB_DATA, *PREMOTE_LIB_DATA;
 
 typedef struct _REMOTE_EXT {
 	PCWCHAR	Module;
@@ -10198,86 +10356,9 @@ BOOL kull_m_remotelib_CreateRemoteCodeWitthPatternReplace(PKULL_M_MEMORY_HANDLE 
 //#pragma once
 //#include "globals.h"
 
-typedef PVOID	SAMPR_HANDLE;
 
-typedef enum _USER_INFORMATION_CLASS {
-	UserSetPasswordInformation = 15,
-	UserInternal1Information = 18,
-	UserAllInformation = 21,
-} USER_INFORMATION_CLASS, *PUSER_INFORMATION_CLASS;
 
-typedef struct _SAMPR_SR_SECURITY_DESCRIPTOR {
-	DWORD Length;
-	PUCHAR SecurityDescriptor;
-} SAMPR_SR_SECURITY_DESCRIPTOR, *PSAMPR_SR_SECURITY_DESCRIPTOR;
 
-typedef struct _GROUP_MEMBERSHIP {
-	DWORD RelativeId;
-	DWORD Attributes;
-} GROUP_MEMBERSHIP, *PGROUP_MEMBERSHIP;
-
-typedef struct _CYPHER_BLOCK {
-	CHAR data[8];
-} CYPHER_BLOCK, *PCYPHER_BLOCK;
-
-typedef struct _NT_OWF_PASSWORD {
-	CYPHER_BLOCK data[2];
-} NT_OWF_PASSWORD, *PNT_OWF_PASSWORD, ENCRYPTED_NT_OWF_PASSWORD, *PENCRYPTED_NT_OWF_PASSWORD, USER_SESSION_KEY;
-
-typedef struct _SAMPR_LOGON_HOURS {
-	unsigned short UnitsPerWeek;
-	unsigned char*  LogonHours;
-} SAMPR_LOGON_HOURS, *PSAMPR_LOGON_HOURS;
-
-typedef struct _SAMPR_USER_INTERNAL1_INFORMATION {
-	BYTE NTHash[LM_NTLM_HASH_LENGTH];
-	BYTE LMHash[LM_NTLM_HASH_LENGTH];
-	BYTE NtPasswordPresent;
-	BYTE LmPasswordPresent;
-	BYTE PasswordExpired;
-	BYTE PrivateDataSensitive;
-} SAMPR_USER_INTERNAL1_INFORMATION, *PSAMPR_USER_INTERNAL1_INFORMATION;
-
- typedef struct _SAMPR_USER_ALL_INFORMATION {
-   FILETIME LastLogon;
-   FILETIME LastLogoff;
-   FILETIME PasswordLastSet;
-   FILETIME AccountExpires;
-   FILETIME PasswordCanChange;
-   FILETIME PasswordMustChange;
-   LSA_UNICODE_STRING UserName;
-   LSA_UNICODE_STRING FullName;
-   LSA_UNICODE_STRING HomeDirectory;
-   LSA_UNICODE_STRING HomeDirectoryDrive;
-   LSA_UNICODE_STRING ScriptPath;
-   LSA_UNICODE_STRING ProfilePath;
-   LSA_UNICODE_STRING AdminComment;
-   LSA_UNICODE_STRING WorkStations;
-   LSA_UNICODE_STRING UserComment;
-   LSA_UNICODE_STRING Parameters;
-   LSA_UNICODE_STRING LmOwfPassword;
-   LSA_UNICODE_STRING NtOwfPassword;
-   LSA_UNICODE_STRING PrivateData;
-   SAMPR_SR_SECURITY_DESCRIPTOR SecurityDescriptor;
-   DWORD UserId;
-   DWORD PrimaryGroupId;
-   DWORD UserAccountControl;
-   DWORD WhichFields;
-   SAMPR_LOGON_HOURS LogonHours;
-   WORD BadPasswordCount;
-   WORD LogonCount;
-   WORD CountryCode;
-   WORD CodePage;
-   BOOLEAN LmPasswordPresent;
-   BOOLEAN NtPasswordPresent;
-   BOOLEAN PasswordExpired;
-   BOOLEAN PrivateDataSensitive;
- } SAMPR_USER_ALL_INFORMATION, *PSAMPR_USER_ALL_INFORMATION;
-
-typedef union _SAMPR_USER_INFO_BUFFER {
-	SAMPR_USER_INTERNAL1_INFORMATION Internal1;
-	SAMPR_USER_ALL_INFORMATION All;
-} SAMPR_USER_INFO_BUFFER, *PSAMPR_USER_INFO_BUFFER;
 
 typedef struct _SAMPR_RID_ENUMERATION {
 	DWORD RelativeId;
@@ -10499,7 +10580,7 @@ extern NTSTATUS WINAPI SamFreeMemory(IN PVOID Buffer);
 */
 //#pragma once
 //#include "globals.h"
-#include <aclapi.h>
+
 
 BOOL kull_m_service_getUniqueForName(PCWSTR serviceName, SERVICE_STATUS_PROCESS * pServiceStatusProcess);
 
@@ -10704,7 +10785,7 @@ BOOL kull_m_string_stringToFileTime(LPCWSTR string, PFILETIME filetime);
 //#pragma once
 //#include "globals.h"
 //#include "kull_m_handle.h"
-#include <sddl.h>
+
 
 extern NTSTATUS NTAPI NtCompareTokens(IN HANDLE FirstTokenHandle, IN HANDLE SecondTokenHandle, OUT PBOOLEAN Equal);
 
@@ -10747,7 +10828,7 @@ BOOL kull_m_token_isLocalAccount(__in_opt HANDLE TokenHandle, __out PBOOL IsMemb
 */
 //#pragma once
 //#include "globals.h"
-#include <msxml2.h>
+
 //#include "kull_m_string.h"
 
 IXMLDOMDocument * kull_m_xml_CreateAndInitDOM();
