@@ -4666,6 +4666,58 @@ typedef struct _TS_PROPERTIES_KIWI {
 //#include "../modules/kull_m_cred.h"
 //#include "../modules/kull_m_crypto_ngc.h"
 
+typedef enum _VAULT_ELEMENT_TYPE {
+	ElementType_Boolean = 0x00,
+	ElementType_Short = 0x01,
+	ElementType_UnsignedShort = 0x02,
+	ElementType_Integer = 0x03,
+	ElementType_UnsignedInteger = 0x04,
+	ElementType_Double = 0x05,
+	ElementType_Guid = 0x06,
+	ElementType_String = 0x07,
+	ElementType_ByteArray = 0x08,
+	ElementType_TimeStamp = 0x09,
+	ElementType_ProtectedArray = 0x0a,
+	ElementType_Attribute = 0x0b,
+	ElementType_Sid = 0x0c,
+	ElementType_Max = 0x0d,
+} VAULT_ELEMENT_TYPE, * PVAULT_ELEMENT_TYPE;
+
+typedef struct _VAULT_BYTE_BUFFER {
+	DWORD Length;
+	PBYTE Value;
+} VAULT_BYTE_BUFFER, * PVAULT_BYTE_BUFFER;
+typedef struct _VAULT_CREDENTIAL_ATTRIBUTEW {
+	LPWSTR  Keyword;
+	DWORD Flags;
+#if defined(_M_X64) || defined(_M_ARM64) // TODO:ARM64
+	DWORD badAlign;
+#endif
+	DWORD ValueSize;
+	LPBYTE Value;
+} VAULT_CREDENTIAL_ATTRIBUTEW, * PVAULT_CREDENTIAL_ATTRIBUTEW;
+
+typedef struct _VAULT_ITEM_DATA {
+	DWORD SchemaElementId;
+	DWORD unk0;
+	VAULT_ELEMENT_TYPE Type;
+	DWORD unk1;
+	union {
+		BOOL Boolean;
+		SHORT Short;
+		WORD UnsignedShort;
+		LONG Int;
+		ULONG UnsignedInt;
+		DOUBLE Double;
+		GUID Guid;
+		LPWSTR String;
+		VAULT_BYTE_BUFFER ByteArray;
+		VAULT_BYTE_BUFFER ProtectedArray;
+		PVAULT_CREDENTIAL_ATTRIBUTEW Attribute;
+		PSID Sid;
+	} data;
+} VAULT_ITEM_DATA, * PVAULT_ITEM_DATA;
+
 const KUHL_M kuhl_m_vault;
 
 NTSTATUS kuhl_m_vault_init();
@@ -4673,7 +4725,7 @@ NTSTATUS kuhl_m_vault_clean();
 
 NTSTATUS kuhl_m_vault_list(int argc, wchar_t * argv[]);
 void kuhl_m_vault_list_descVault(HANDLE hVault);
-void kuhl_m_vault_list_descItemData(struct _VAULT_ITEM_DATA * pData);
+void kuhl_m_vault_list_descItemData(VAULT_ITEM_DATA* pData);
 NTSTATUS kuhl_m_vault_cred(int argc, wchar_t * argv[]);
 void kuhl_m_vault_cred_tryEncrypted(PCREDENTIAL pCredential);
 
@@ -4747,58 +4799,12 @@ typedef struct _VAULT_INFORMATION {
 	};
 } VAULT_INFORMATION, *PVAULT_INFORMATION;
 
-typedef enum _VAULT_ELEMENT_TYPE {
-	ElementType_Boolean			= 0x00,
-	ElementType_Short			= 0x01,
-	ElementType_UnsignedShort	= 0x02,
-	ElementType_Integer			= 0x03,
-	ElementType_UnsignedInteger	= 0x04,
-	ElementType_Double			= 0x05,
-	ElementType_Guid			= 0x06,
-	ElementType_String			= 0x07,
-	ElementType_ByteArray		= 0x08,
-	ElementType_TimeStamp		= 0x09,
-	ElementType_ProtectedArray	= 0x0a,
-	ElementType_Attribute		= 0x0b,
-	ElementType_Sid				= 0x0c,
-	ElementType_Max				= 0x0d,
-} VAULT_ELEMENT_TYPE, *PVAULT_ELEMENT_TYPE;
 
-typedef struct _VAULT_BYTE_BUFFER {
-	DWORD Length;
-	PBYTE Value;
-} VAULT_BYTE_BUFFER, *PVAULT_BYTE_BUFFER;
 
-typedef struct _VAULT_CREDENTIAL_ATTRIBUTEW {
-    LPWSTR  Keyword;
-    DWORD Flags;
-#if defined(_M_X64) || defined(_M_ARM64) // TODO:ARM64
-	DWORD badAlign;
-#endif
-    DWORD ValueSize;
-    LPBYTE Value;
-} VAULT_CREDENTIAL_ATTRIBUTEW, *PVAULT_CREDENTIAL_ATTRIBUTEW;
 
-typedef struct _VAULT_ITEM_DATA {
-	DWORD SchemaElementId;
-	DWORD unk0;
-	VAULT_ELEMENT_TYPE Type;
-	DWORD unk1;
-	union {
-		BOOL Boolean;
-		SHORT Short;
-		WORD UnsignedShort;
-		LONG Int;
-		ULONG UnsignedInt;
-		DOUBLE Double;
-		GUID Guid;
-		LPWSTR String;
-		VAULT_BYTE_BUFFER ByteArray;
-		VAULT_BYTE_BUFFER ProtectedArray;
-		PVAULT_CREDENTIAL_ATTRIBUTEW Attribute;
-		PSID Sid;
-	} data;
-} VAULT_ITEM_DATA, *PVAULT_ITEM_DATA;
+
+
+
 
 typedef struct _VAULT_ITEM_7 {
 	GUID SchemaId;
@@ -6149,6 +6155,12 @@ typedef struct _MSV1_0_STD_DATA {
 	PLUID						LogonId;
 } MSV1_0_STD_DATA, *PMSV1_0_STD_DATA;
 
+typedef struct _KIWI_MSV1_0_PRIMARY_CREDENTIALS {
+	struct _KIWI_MSV1_0_PRIMARY_CREDENTIALS* next;
+	ANSI_STRING Primary;
+	LSA_UNICODE_STRING Credentials;
+} KIWI_MSV1_0_PRIMARY_CREDENTIALS, * PKIWI_MSV1_0_PRIMARY_CREDENTIALS;
+
 typedef BOOL (CALLBACK * PKUHL_M_SEKURLSA_MSV_CRED_CALLBACK) (IN PKUHL_M_SEKURLSA_CONTEXT cLsass, IN struct _KIWI_MSV1_0_PRIMARY_CREDENTIALS * pCredentials, IN DWORD AuthenticationPackageId, IN PKULL_M_MEMORY_ADDRESS origBufferAddress, IN OPTIONAL LPVOID pOptionalData);
 
 KUHL_M_SEKURLSA_PACKAGE kuhl_m_sekurlsa_msv_package;
@@ -6158,8 +6170,8 @@ void CALLBACK kuhl_m_sekurlsa_enum_logon_callback_msv(IN PKIWI_BASIC_SECURITY_LO
 BOOL CALLBACK kuhl_m_sekurlsa_enum_callback_msv_pth(IN PKIWI_BASIC_SECURITY_LOGON_SESSION_DATA pData, IN OPTIONAL LPVOID pOptionalData);
 
 VOID kuhl_m_sekurlsa_msv_enum_cred(IN PKUHL_M_SEKURLSA_CONTEXT cLsass, IN PVOID pCredentials, IN PKUHL_M_SEKURLSA_MSV_CRED_CALLBACK credCallback, IN PVOID optionalData);
-BOOL CALLBACK kuhl_m_sekurlsa_msv_enum_cred_callback_std(IN PKUHL_M_SEKURLSA_CONTEXT cLsass, IN struct _KIWI_MSV1_0_PRIMARY_CREDENTIALS * pCredentials, IN DWORD AuthenticationPackageId, IN PKULL_M_MEMORY_ADDRESS origBufferAddress, IN OPTIONAL LPVOID pOptionalData);
-BOOL CALLBACK kuhl_m_sekurlsa_msv_enum_cred_callback_pth(IN PKUHL_M_SEKURLSA_CONTEXT cLsass, IN struct _KIWI_MSV1_0_PRIMARY_CREDENTIALS * pCredentials, IN DWORD AuthenticationPackageId, IN PKULL_M_MEMORY_ADDRESS origBufferAddress, IN OPTIONAL LPVOID pOptionalData);
+BOOL CALLBACK kuhl_m_sekurlsa_msv_enum_cred_callback_std(IN PKUHL_M_SEKURLSA_CONTEXT cLsass, IN struct _KIWI_MSV1_0_PRIMARY_CREDENTIALS* pCredentials, IN DWORD AuthenticationPackageId, IN PKULL_M_MEMORY_ADDRESS origBufferAddress, IN OPTIONAL LPVOID pOptionalData);
+BOOL CALLBACK kuhl_m_sekurlsa_msv_enum_cred_callback_pth(IN PKUHL_M_SEKURLSA_CONTEXT cLsass, IN struct _KIWI_MSV1_0_PRIMARY_CREDENTIALS* pCredentials, IN DWORD AuthenticationPackageId, IN PKULL_M_MEMORY_ADDRESS origBufferAddress, IN OPTIONAL LPVOID pOptionalData);
 
 const MSV1_0_PRIMARY_HELPER * kuhl_m_sekurlsa_msv_helper(PKUHL_M_SEKURLSA_CONTEXT context);
 
@@ -6323,6 +6335,84 @@ typedef struct _KIWI_WDIGEST_LIST_ENTRY {
 #define KUHL_SEKURLSA_CREDS_DISPLAY_DOMAIN				0x40000000
 #define KUHL_SEKURLSA_CREDS_DISPLAY_SSP					0x80000000
 
+typedef struct _KDC_DOMAIN_KEY {
+	LONG	type;
+	DWORD	size;
+	DWORD	offset;
+} KDC_DOMAIN_KEY, * PKDC_DOMAIN_KEY;
+
+typedef struct _KDC_DOMAIN_KEYS {
+	DWORD		keysSize; //60
+	DWORD		unk0;
+	DWORD		nbKeys;
+	KDC_DOMAIN_KEY keys[ANYSIZE_ARRAY];
+} KDC_DOMAIN_KEYS, * PKDC_DOMAIN_KEYS;
+
+typedef struct _KDC_DOMAIN_KEYS_INFO {
+	PKDC_DOMAIN_KEYS	keys;
+	DWORD				keysSize; //60
+	LSA_UNICODE_STRING	password;
+} KDC_DOMAIN_KEYS_INFO, * PKDC_DOMAIN_KEYS_INFO;
+
+typedef struct _KDC_DOMAIN_INFO {
+	LIST_ENTRY list;
+	LSA_UNICODE_STRING	FullDomainName;
+	LSA_UNICODE_STRING	NetBiosName;
+	PVOID		current;
+	DWORD		unk1;	// 4		// 0
+	DWORD		unk2;	// 8		// 32
+	DWORD		unk3;	// 2		// 0
+	DWORD		unk4;	// 1		// 1
+	PVOID		unk5;	// 8*0
+	DWORD		unk6;	// 3		// 2
+	// align
+	PSID		DomainSid;
+	KDC_DOMAIN_KEYS_INFO	IncomingAuthenticationKeys;
+	KDC_DOMAIN_KEYS_INFO	OutgoingAuthenticationKeys;
+	KDC_DOMAIN_KEYS_INFO	IncomingPreviousAuthenticationKeys;
+	KDC_DOMAIN_KEYS_INFO	OutgoingPreviousAuthenticationKeys;
+} KDC_DOMAIN_INFO, * PKDC_DOMAIN_INFO;
+
+typedef enum _KIWI_CREDENTIAL_KEY_TYPE {
+	CREDENTIALS_KEY_TYPE_NTLM = 1,
+	CREDENTIALS_KEY_TYPE_SHA1 = 2,
+	CREDENTIALS_KEY_TYPE_ROOTKEY = 3,
+	CREDENTIALS_KEY_TYPE_DPAPI_PROTECTION = 4,
+} KIWI_CREDENTIAL_KEY_TYPE;
+
+typedef struct _KIWI_CREDENTIAL_KEY {
+	DWORD unkEnum; // version ?
+	KIWI_CREDENTIAL_KEY_TYPE type;
+	WORD iterations;
+	WORD cbData;
+	BYTE* pbData;
+} KIWI_CREDENTIAL_KEY, * PKIWI_CREDENTIAL_KEY;
+
+typedef struct _ENC_LSAISO_DATA_BLOB {
+	BYTE unkData1[16];
+	BYTE unkData2[16];
+	BYTE data[ANYSIZE_ARRAY];
+} ENC_LSAISO_DATA_BLOB, * PENC_LSAISO_DATA_BLOB;
+
+typedef struct _LSAISO_DATA_BLOB {
+	DWORD structSize;
+	DWORD unk0;
+	DWORD typeSize;
+	DWORD unk1;
+	DWORD unk2;
+	DWORD unk3;
+	DWORD unk4;
+	BYTE KdfContext[32];
+	BYTE Tag[16];
+	DWORD unk5; // AuthData start
+	DWORD unk6;
+	DWORD unk7;
+	DWORD unk8;
+	DWORD unk9;
+	DWORD szEncrypted; // AuthData ends + type
+	BYTE data[ANYSIZE_ARRAY]; // Type then Encrypted
+} LSAISO_DATA_BLOB, * PLSAISO_DATA_BLOB;
+
 const KUHL_M kuhl_m_sekurlsa;
 
 NTSTATUS kuhl_m_sekurlsa_init();
@@ -6439,68 +6529,15 @@ typedef struct _DUAL_KRBTGT {
 	PVOID krbtgt_previous;
 } DUAL_KRBTGT, *PDUAL_KRBTGT;
 
-typedef struct _KDC_DOMAIN_KEY {
-	LONG	type;
-	DWORD	size;
-	DWORD	offset;
-} KDC_DOMAIN_KEY, *PKDC_DOMAIN_KEY;
 
-typedef struct _KDC_DOMAIN_KEYS {
-	DWORD		keysSize; //60
-	DWORD		unk0;
-	DWORD		nbKeys;
-	KDC_DOMAIN_KEY keys[ANYSIZE_ARRAY];
-} KDC_DOMAIN_KEYS, *PKDC_DOMAIN_KEYS;
 
-typedef struct _KDC_DOMAIN_KEYS_INFO {
-	PKDC_DOMAIN_KEYS	keys;
-	DWORD				keysSize; //60
-	LSA_UNICODE_STRING	password;
-} KDC_DOMAIN_KEYS_INFO, *PKDC_DOMAIN_KEYS_INFO;
 
-typedef struct _KDC_DOMAIN_INFO {
-	LIST_ENTRY list;
-	LSA_UNICODE_STRING	FullDomainName;
-	LSA_UNICODE_STRING	NetBiosName;
-	PVOID		current;
-	DWORD		unk1;	// 4		// 0
-	DWORD		unk2;	// 8		// 32
-	DWORD		unk3;	// 2		// 0
-	DWORD		unk4;	// 1		// 1
-	PVOID		unk5;	// 8*0
-	DWORD		unk6;	// 3		// 2
-	// align
-	PSID		DomainSid;
-	KDC_DOMAIN_KEYS_INFO	IncomingAuthenticationKeys;
-	KDC_DOMAIN_KEYS_INFO	OutgoingAuthenticationKeys;
-	KDC_DOMAIN_KEYS_INFO	IncomingPreviousAuthenticationKeys;
-	KDC_DOMAIN_KEYS_INFO	OutgoingPreviousAuthenticationKeys;
-} KDC_DOMAIN_INFO , *PKDC_DOMAIN_INFO;
 
-typedef struct _LSAISO_DATA_BLOB {
-	DWORD structSize;
-	DWORD unk0;
-	DWORD typeSize;
-	DWORD unk1;
-	DWORD unk2;
-	DWORD unk3;
-	DWORD unk4;
-	BYTE KdfContext[32];
-	BYTE Tag[16];
-	DWORD unk5; // AuthData start
-	DWORD unk6;
-	DWORD unk7;
-	DWORD unk8;
-	DWORD unk9;
-	DWORD szEncrypted; // AuthData ends + type
-	BYTE data[ANYSIZE_ARRAY]; // Type then Encrypted
-} LSAISO_DATA_BLOB, *PLSAISO_DATA_BLOB;
 
-typedef struct _ENC_LSAISO_DATA_BLOB {
-	BYTE unkData1[16];
-	BYTE unkData2[16];
-	BYTE data[ANYSIZE_ARRAY];
-} ENC_LSAISO_DATA_BLOB, *PENC_LSAISO_DATA_BLOB;
+
+
+
+
 
 //#include "../dpapi/kuhl_m_dpapi_oe.h"
 //#include "kuhl_m_sekurlsa_sk.h"
@@ -6553,11 +6590,7 @@ PVOID kuhl_m_sekurlsa_utils_pFromAVLByLuidRec(PKULL_M_MEMORY_ADDRESS pTable, ULO
 BOOL kuhl_m_sekurlsa_utils_search(PKUHL_M_SEKURLSA_CONTEXT cLsass, PKUHL_M_SEKURLSA_LIB pLib);
 BOOL kuhl_m_sekurlsa_utils_search_generic(PKUHL_M_SEKURLSA_CONTEXT cLsass, PKUHL_M_SEKURLSA_LIB pLib, PKULL_M_PATCH_GENERIC generics, SIZE_T cbGenerics, PVOID * genericPtr, PVOID * genericPtr1, PVOID * genericPtr2, PLONG genericOffset1);
 
-typedef struct _KIWI_MSV1_0_PRIMARY_CREDENTIALS {
-	struct _KIWI_MSV1_0_PRIMARY_CREDENTIALS *next;
-	ANSI_STRING Primary;
-	LSA_UNICODE_STRING Credentials;
-} KIWI_MSV1_0_PRIMARY_CREDENTIALS, *PKIWI_MSV1_0_PRIMARY_CREDENTIALS;
+
 
 typedef struct _KIWI_MSV1_0_CREDENTIALS {
 	struct _KIWI_MSV1_0_CREDENTIALS *next;
@@ -7277,20 +7310,9 @@ void PCLAIMS_SET_Free(handle_t _MidlEsHandle, PCLAIMS_SET * _pType);
 //#pragma once
 //#include "kull_m_rpc.h"
 
-typedef enum _KIWI_CREDENTIAL_KEY_TYPE {
-	CREDENTIALS_KEY_TYPE_NTLM = 1,
-	CREDENTIALS_KEY_TYPE_SHA1 = 2,
-	CREDENTIALS_KEY_TYPE_ROOTKEY = 3,
-	CREDENTIALS_KEY_TYPE_DPAPI_PROTECTION = 4,
-} KIWI_CREDENTIAL_KEY_TYPE;
 
-typedef struct _KIWI_CREDENTIAL_KEY {
-	DWORD unkEnum; // version ?
-	KIWI_CREDENTIAL_KEY_TYPE type;
-	WORD iterations;
-	WORD cbData;
-	BYTE *pbData;
-} KIWI_CREDENTIAL_KEY, *PKIWI_CREDENTIAL_KEY;
+
+
 
 typedef struct _KIWI_CREDENTIAL_KEYS {
 	DWORD count;
@@ -8927,7 +8949,7 @@ void kull_m_dpapi_masterkeys_credhist_delete(PKULL_M_DPAPI_MASTERKEY_CREDHIST cr
 void kull_m_dpapi_masterkeys_credhist_descr(DWORD level, PKULL_M_DPAPI_MASTERKEY_CREDHIST credhist);
 PBYTE kull_m_dpapi_masterkeys_credhist_tobin(PKULL_M_DPAPI_MASTERKEY_CREDHIST credhist, OPTIONAL DWORD64 *size);
 
-PKULL_M_DPAPI_MASTERKEY_DOMAINKEY kull_m_dpapi_masterkeys_domainkey_create(PVOID LPCVOID, DWORD64 size);
+PKULL_M_DPAPI_MASTERKEY_DOMAINKEY kull_m_dpapi_masterkeys_domainkey_create(LPCVOID data, DWORD64 size);
 void kull_m_dpapi_masterkeys_domainkey_delete(PKULL_M_DPAPI_MASTERKEY_DOMAINKEY domainkey);
 void kull_m_dpapi_masterkeys_domainkey_descr(DWORD level, PKULL_M_DPAPI_MASTERKEY_DOMAINKEY domainkey);
 PBYTE kull_m_dpapi_masterkeys_domainkey_tobin(PKULL_M_DPAPI_MASTERKEY_DOMAINKEY domainkey, OPTIONAL DWORD64 *size);
