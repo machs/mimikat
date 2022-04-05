@@ -11030,8 +11030,7 @@ wchar_t * kull_m_xml_getTextValue(IXMLDOMNode *pNode, PCWSTR name);
 ** the version number) and changes its name to "sqlite3.h" as
 ** part of the build process.
 */
-#ifndef SQLITE3_H
-#define SQLITE3_H
+
 #include <stdarg.h>     /* Needed for the definition of va_list */
 
 /*
@@ -17428,43 +17427,43 @@ typedef struct sqlite3_module sqlite3_module;
 ** of this structure must not change while it is registered with
 ** any database connection.
 */
-struct sqlite3_module {
-  int iVersion;
-  int (*xCreate)(sqlite3*, void *pAux,
-               int argc, const char *const*argv,
-               sqlite3_vtab **ppVTab, char**);
-  int (*xConnect)(sqlite3*, void *pAux,
-               int argc, const char *const*argv,
-               sqlite3_vtab **ppVTab, char**);
-  int (*xBestIndex)(sqlite3_vtab *pVTab, sqlite3_index_info*);
-  int (*xDisconnect)(sqlite3_vtab *pVTab);
-  int (*xDestroy)(sqlite3_vtab *pVTab);
-  int (*xOpen)(sqlite3_vtab *pVTab, sqlite3_vtab_cursor **ppCursor);
-  int (*xClose)(sqlite3_vtab_cursor*);
-  int (*xFilter)(sqlite3_vtab_cursor*, int idxNum, const char *idxStr,
-                int argc, sqlite3_value **argv);
-  int (*xNext)(sqlite3_vtab_cursor*);
-  int (*xEof)(sqlite3_vtab_cursor*);
-  int (*xColumn)(sqlite3_vtab_cursor*, sqlite3_context*, int);
-  int (*xRowid)(sqlite3_vtab_cursor*, sqlite3_int64 *pRowid);
-  int (*xUpdate)(sqlite3_vtab *, int, sqlite3_value **, sqlite3_int64 *);
-  int (*xBegin)(sqlite3_vtab *pVTab);
-  int (*xSync)(sqlite3_vtab *pVTab);
-  int (*xCommit)(sqlite3_vtab *pVTab);
-  int (*xRollback)(sqlite3_vtab *pVTab);
-  int (*xFindFunction)(sqlite3_vtab *pVtab, int nArg, const char *zName,
-                       void (**pxFunc)(sqlite3_context*,int,sqlite3_value**),
-                       void **ppArg);
-  int (*xRename)(sqlite3_vtab *pVtab, const char *zNew);
-  /* The methods above are in version 1 of the sqlite_module object. Those 
-  ** below are for version 2 and greater. */
-  int (*xSavepoint)(sqlite3_vtab *pVTab, int);
-  int (*xRelease)(sqlite3_vtab *pVTab, int);
-  int (*xRollbackTo)(sqlite3_vtab *pVTab, int);
-  /* The methods above are in versions 1 and 2 of the sqlite_module object.
-  ** Those below are for version 3 and greater. */
-  int (*xShadowName)(const char*);
-};
+//struct sqlite3_module {
+//  int iVersion;
+//  int (*xCreate)(sqlite3*, void *pAux,
+//               int argc, const char *const*argv,
+//               sqlite3_vtab **ppVTab, char**);
+//  int (*xConnect)(sqlite3*, void *pAux,
+//               int argc, const char *const*argv,
+//               sqlite3_vtab **ppVTab, char**);
+//  int (*xBestIndex)(sqlite3_vtab *pVTab, sqlite3_index_info*);
+//  int (*xDisconnect)(sqlite3_vtab *pVTab);
+//  int (*xDestroy)(sqlite3_vtab *pVTab);
+//  int (*xOpen)(sqlite3_vtab *pVTab, sqlite3_vtab_cursor **ppCursor);
+//  int (*xClose)(sqlite3_vtab_cursor*);
+//  int (*xFilter)(sqlite3_vtab_cursor*, int idxNum, const char *idxStr,
+//                int argc, sqlite3_value **argv);
+//  int (*xNext)(sqlite3_vtab_cursor*);
+//  int (*xEof)(sqlite3_vtab_cursor*);
+//  int (*xColumn)(sqlite3_vtab_cursor*, sqlite3_context*, int);
+//  int (*xRowid)(sqlite3_vtab_cursor*, sqlite3_int64 *pRowid);
+//  int (*xUpdate)(sqlite3_vtab *, int, sqlite3_value **, sqlite3_int64 *);
+//  int (*xBegin)(sqlite3_vtab *pVTab);
+//  int (*xSync)(sqlite3_vtab *pVTab);
+//  int (*xCommit)(sqlite3_vtab *pVTab);
+//  int (*xRollback)(sqlite3_vtab *pVTab);
+//  int (*xFindFunction)(sqlite3_vtab *pVtab, int nArg, const char *zName,
+//                       void (**pxFunc)(sqlite3_context*,int,sqlite3_value**),
+//                       void **ppArg);
+//  int (*xRename)(sqlite3_vtab *pVtab, const char *zNew);
+//  /* The methods above are in version 1 of the sqlite_module object. Those 
+//  ** below are for version 2 and greater. */
+//  int (*xSavepoint)(sqlite3_vtab *pVTab, int);
+//  int (*xRelease)(sqlite3_vtab *pVTab, int);
+//  int (*xRollbackTo)(sqlite3_vtab *pVTab, int);
+//  /* The methods above are in versions 1 and 2 of the sqlite_module object.
+//  ** Those below are for version 3 and greater. */
+//  int (*xShadowName)(const char*);
+//};
 
 /*
 ** CAPI3REF: Virtual Table Indexing Information
@@ -19174,19 +19173,19 @@ struct sqlite3_pcache_methods2 {
 ** retained in the header file for backwards compatibility only.
 */
 typedef struct sqlite3_pcache_methods sqlite3_pcache_methods;
-struct sqlite3_pcache_methods {
-  void *pArg;
-  int (*xInit)(void*);
-  void (*xShutdown)(void*);
-  sqlite3_pcache *(*xCreate)(int szPage, int bPurgeable);
-  void (*xCachesize)(sqlite3_pcache*, int nCachesize);
-  int (*xPagecount)(sqlite3_pcache*);
-  void *(*xFetch)(sqlite3_pcache*, unsigned key, int createFlag);
-  void (*xUnpin)(sqlite3_pcache*, void*, int discard);
-  void (*xRekey)(sqlite3_pcache*, void*, unsigned oldKey, unsigned newKey);
-  void (*xTruncate)(sqlite3_pcache*, unsigned iLimit);
-  void (*xDestroy)(sqlite3_pcache*);
-};
+//struct sqlite3_pcache_methods {
+//  void *pArg;
+//  int (*xInit)(void*);
+//  void (*xShutdown)(void*);
+//  sqlite3_pcache *(*xCreate)(int szPage, int bPurgeable);
+//  void (*xCachesize)(sqlite3_pcache*, int nCachesize);
+//  int (*xPagecount)(sqlite3_pcache*);
+//  void *(*xFetch)(sqlite3_pcache*, unsigned key, int createFlag);
+//  void (*xUnpin)(sqlite3_pcache*, void*, int discard);
+//  void (*xRekey)(sqlite3_pcache*, void*, unsigned oldKey, unsigned newKey);
+//  void (*xTruncate)(sqlite3_pcache*, unsigned iLimit);
+//  void (*xDestroy)(sqlite3_pcache*);
+//};
 
 
 /*
@@ -20495,7 +20494,7 @@ SQLITE_API int sqlite3_deserialize(
 #ifdef __cplusplus
 }  /* End of the 'extern "C"' block */
 #endif
-#endif /* SQLITE3_H */
+
 
 /******** Begin file sqlite3rtree.h *********/
 /*
